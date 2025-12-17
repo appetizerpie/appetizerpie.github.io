@@ -207,7 +207,7 @@ function render() {
 
     if (!regexStr || !text) {
         // 초기 가이드 문구를 띄우고 싶다면 여기에 추가
-        renderTarget.innerHTML = "<div style='color:#adb5bd; text-align:center; padding-top:100px;'>팩트처럼 정규식을 나눈경우(박스, 내용)는 못봐요..🥺<br>정규식 1개짜리만 볼 수 있습니다.<br><br>여백 문제로 완전히 똑같이 나오지 않습니다.<br>아주 살짝 차이나는 정도..<br><br><br>+<br>실리에 디자인 적용할때 사소한 팁<br>&lt;/style&gt; 이후에 <b>&quot;내용&quot;(큰따옴표)</b>들어가면 오류남<br><b>/*&nbsp;내용&nbsp;*/(주석처리)</b>들어가면 오류남<br>아닐수도 있지만 제 경우는 그랬음<br>ㅠㅠ</div>";
+        renderTarget.innerHTML = "<div style='color:#adb5bd; text-align:center; padding-top:100px;'>팩트처럼 정규식을 나눈경우(박스, 내용)는 못봐요..🥺<br>정규식 1개짜리만 볼 수 있습니다.<br><br>여백 문제로 완전히 똑같이 나오지 않습니다.<br>아주 살짝 차이나는 정도..<br>출력창과 정규식창은 끌어내리면 늘어나요<br><br><br>+<br>실리에 디자인 적용할때 사소한 팁<br>&lt;/style&gt; 이후에 <b>&quot;내용&quot;(큰따옴표)</b>들어가면 오류남<br><b>/*&nbsp;내용&nbsp;*/(주석처리)</b>들어가면 오류남<br>아닐수도 있지만 제 경우는 그랬음<br>ㅠㅠ</div>";
         return;
     }
 
@@ -361,3 +361,4 @@ document.getElementById('theme-toggle').addEventListener('click', function() {
     previewSide.classList.toggle('dark-mode');
     
 });
+
