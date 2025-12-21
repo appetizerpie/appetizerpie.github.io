@@ -39,6 +39,7 @@ window.onload = function() {
     
     // 모바일에서 초기 로드 시 편집 탭만 표시
     initMobileView();
+    initResizer(); // 이 줄 추가
 };
 
 
@@ -207,7 +208,7 @@ function render() {
 
     if (!regexStr || !text) {
         // 초기 가이드 문구를 띄우고 싶다면 여기에 추가
-        renderTarget.innerHTML = "<div style='color:#adb5bd; text-align:center; padding-top:100px;'>팩트처럼 정규식을 나눈경우(박스, 내용)는 못봐요..🥺<br>정규식 1개짜리만 볼 수 있습니다.<br><br>여백 문제로 완전히 똑같이 나오지 않습니다.<br>아주 살짝 차이나는 정도..<br>출력창과 정규식창은 끌어내리면 늘어나요<br><br><br>+<br>실리에 디자인 적용할때 사소한 팁<br>&lt;/style&gt; 이후에 <b>&quot;내용&quot;(큰따옴표)</b>들어가면 오류남<br><b>/*&nbsp;내용&nbsp;*/(주석처리)</b>들어가면 오류남<br>아닐수도 있지만 제 경우는 그랬음<br>ㅠㅠ</div>";
+        renderTarget.innerHTML = "<div style='color:#adb5bd; text-align:center;'>팩트처럼 정규식을 나눈경우(박스, 내용)는 못봐요..🥺<br>정규식 1개짜리만 볼 수 있습니다.<br><br>여백 문제로 완전히 똑같이 나오지 않습니다.<br>아주 살짝 차이나는 정도..<br><br><br>+<br>실리에 디자인 적용할때 사소한 팁<br>&lt;/style&gt; 이후에 <b>&quot;내용&quot;(큰따옴표)</b>들어가면 오류남<br><b>/*&nbsp;내용&nbsp;*/(주석처리)</b>들어가면 오류남<br>아닐수도 있지만 제 경우는 그랬음<br>ㅠㅠ</div>";
         return;
     }
 
@@ -274,7 +275,7 @@ function render() {
             });
             renderTarget.innerHTML = finalHtml;
         } else {
-            renderTarget.innerHTML = "<div style='color:#adb5bd; text-align:center; padding-top:100px;'>매칭 결과가 없습니다.</div>";
+            renderTarget.innerHTML = "<div style='color:#adb5bd; text-align:center;'>매칭 결과가 없습니다.</div>";
         }
     } catch (e) {
         regexError.style.display = 'block';
@@ -358,7 +359,115 @@ function switchMobileTab(tab) {
 
 document.getElementById('theme-toggle').addEventListener('click', function() {
     const previewSide = document.querySelector('.preview-side');
+    const themeToggle = document.getElementById('theme-toggle');
+    
     previewSide.classList.toggle('dark-mode');
     
+    // 다크모드 상태에 따라 아이콘 변경
+    if (previewSide.classList.contains('dark-mode')) {
+        themeToggle.innerText = '☀️';
+    } else {
+        themeToggle.innerText = '🌙';
+    }
 });
 
+
+// 리사이저 드래그 기능
+function initResizer() {
+    const resizer = document.getElementById('resizer');
+    const editorSide = document.getElementById('editor-side');
+    const previewSide = document.getElementById('preview-side');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        
+        const container = document.querySelector('.container');
+        const containerRect = container.getBoundingClientRect();
+        const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+        
+        // 최소/최대 크기 제한 (20% ~ 80%)
+        if (newLeftWidth > 20 && newLeftWidth < 80) {
+            editorSide.style.width = `${newLeftWidth}%`;
+            previewSide.style.width = `${100 - newLeftWidth}%`;
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        isResizing = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    });
+}
+
+/**
+ * 너비 조절 패널 토글
+ */
+function toggleWidthControl() {
+    const panel = document.getElementById('width-control');
+    const btn = document.getElementById('width-toggle-btn');
+    
+    panel.classList.toggle('active');
+    btn.classList.toggle('active');
+}
+
+/**
+ * 프리뷰 너비 설정
+ */
+function setPreviewWidth() {
+    const input = document.getElementById('preview-width-input');
+    const width = parseInt(input.value);
+    
+    if (!width || width < 200 || width > 2000) {
+        alert('200~2000 사이의 값을 입력하세요.');
+        return;
+    }
+    
+    const previewSide = document.getElementById('preview-side');
+    const editorSide = document.getElementById('editor-side');
+    const container = document.querySelector('.container');
+    const containerWidth = container.getBoundingClientRect().width;
+    
+    // px을 %로 변환
+    const percentage = (width / containerWidth) * 100;
+    
+    if (percentage < 20 || percentage > 80) {
+        alert('현재 화면에서 설정 가능한 범위를 벗어났습니다.');
+        return;
+    }
+    
+    previewSide.style.width = `${percentage}%`;
+    editorSide.style.width = `${100 - percentage}%`;
+}
+
+/**
+ * 프리뷰 너비 리셋
+ */
+function resetPreviewWidth() {
+    const previewSide = document.getElementById('preview-side');
+    const editorSide = document.getElementById('editor-side');
+    
+    editorSide.style.width = '40%';
+    previewSide.style.width = '60%';
+    
+    document.getElementById('preview-width-input').value = '';
+}
+
+// 엔터키로도 적용 가능하게
+window.addEventListener('DOMContentLoaded', () => {
+    const widthInput = document.getElementById('preview-width-input');
+    if (widthInput) {
+        widthInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                setPreviewWidth();
+            }
+        });
+    }
+});

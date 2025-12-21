@@ -17,16 +17,27 @@
     <div class="view-modes">
         <button class="view-btn" id="btn-content" onclick="setViewMode('content')">내용보기</button>
         <button class="view-btn" id="btn-debug" onclick="setViewMode('debug')">캡쳐($)보기</button>
-        <button class="view-btn" id="theme-toggle">배경전환</button>
+        <button class="view-btn" id="theme-toggle">🌙</button>
+        
+        <!-- 토글 버튼 추가 -->
+        <button class="view-btn" id="width-toggle-btn" onclick="toggleWidthControl()">📏</button>
+        
+        <!-- 숨겨진 너비 조절 패널 -->
+        <div class="width-control" id="width-control">
+            <input type="number" id="preview-width-input" placeholder="너비(px)" min="200" max="2000">
+            <button class="view-btn" onclick="setPreviewWidth()">적용</button>
+            <button class="view-btn" onclick="resetPreviewWidth()">리셋</button>
+        </div>
     </div>
 </header>
+
 
 <div class="preset-bar" id="preset-container">
     <span class="preset-label">PRESETS:</span>
     <button class="reset-btn" onclick="resetAll()">초기화</button>
 </div>
 
-<!-- 모바일 탭 네비게이션 추가 -->
+<!-- 모바일 탭 -->
 <div class="mobile-tabs">
     <button class="mobile-tab active" onclick="switchMobileTab('editor')">편집</button>
     <button class="mobile-tab" onclick="switchMobileTab('preview')">미리보기</button>
@@ -72,6 +83,7 @@
         </div>
     </div>
 
+<div class="resizer" id="resizer"></div>
     <div class="preview-side" id="preview-side">
         <div id="preview-render">
             <div class="render-wrapper" id="render-target"></div>

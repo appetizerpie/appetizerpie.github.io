@@ -376,6 +376,7 @@ border-left: 20px solid rgba(0,0,0,0);
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);   
+    overflow-y: auto;
 }
 
 .preview-side.dark-mode {
@@ -384,16 +385,10 @@ border-left: 20px solid rgba(0,0,0,0);
 
 #preview-render {
     flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+    padding: 20px;    
 }
 
-#preview-render::-webkit-scrollbar {
-    display: none;
-}
+
 
 .render-wrapper {
     width: 100%;
@@ -600,5 +595,99 @@ border-left: 20px solid rgba(0,0,0,0);
         width: 28px;
         height: 28px;
         background-size: 24px 24px;
+    }
+}
+
+.resizer {
+    width: 2px;
+    background: #C8E6C9;
+    cursor: col-resize;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resizer::before {
+    content: '⋮';
+    font-size: 20px;
+    color: #81C784;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 4px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.resizer:hover {
+    background: #81C784;
+}
+
+.resizer:active::before {
+    color: #4CAF50;
+    transform: scale(1.1);
+}
+
+
+@media (max-width: 768px) {
+    .resizer {
+        display: none;
+    }
+}
+
+.width-control {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    white-space: nowrap;
+}
+
+.width-control.active {
+    max-width: 300px;
+    opacity: 1;
+}
+
+#preview-width-input {
+    width: 100px;
+    padding: 6px 10px;
+    border: 2px solid #D4E5D8;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    background: #FAFBF7;
+    color: #2d3748;
+}
+
+#preview-width-input:focus {
+    outline: none;
+    border-color: #81C784;
+    background: #ffffff;
+}
+
+#width-toggle-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: #81C784;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .width-control {
+        width: 100%;
+        margin-top: 5px;
+        flex-wrap: wrap;
+    }
+    
+    .width-control.active {
+        max-width: 100%;
+    }
+    
+    #preview-width-input {
+        flex: 1;
+        min-width: 100px;
     }
 }
