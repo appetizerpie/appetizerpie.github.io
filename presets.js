@@ -1199,7 +1199,173 @@ opacity: 0.7;
   <div class='simple-soundtrack-card'>
     🎵 SOUNDTRACK: <span class='simple-soundtrack-text'>$11</span>
   </div>
-</div>`}
+</div>`},
+{
+        name: "COD",
+        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션이 있다면 이런모습]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도가 이런이유로 오름]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
+        regex: `/<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>/gs`,
+        template: `<style>
+.cod-container {
+--cod-bg: #0e1116;
+--cod-border: rgba(84, 193, 255, 0.3);
+--cod-accent: #54c1ff;
+--cod-alert: #ff4b4b;
+--cod-gold: #e2b714;
+--cod-text: #d1d5db;
+--cod-text-dim: #6e7681;
+background: var(--cod-bg);
+background-image:
+linear-gradient(45deg, #080a0d 25%, transparent 25%, transparent 75%, #080a0d 75%, #080a0d),
+linear-gradient(45deg, #080a0d 25%, transparent 25%, transparent 75%, #080a0d 75%, #080a0d);
+background-size: 20px 20px;
+background-position: 0 0, 10px 10px;
+border: 1px solid var(--cod-border);
+color: var(--cod-text);
+padding: 8px 10px;
+max-width: 100%;
+display: flex;
+flex-direction: column; 
+gap: 6px;
+position: relative;
+}
+.cod-right-col {
+display: flex;
+flex-direction: column;
+gap: 4px;
+min-width: 0;
+}
+.cod-header-mini {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: rgba(84, 193, 255, 0.08);
+padding: 4px 8px;
+border: 1px solid rgba(255,255,255,0.05);
+}
+.cod-header-title {
+font-weight: 700;
+color: var(--cod-accent);
+letter-spacing: 1px;
+font-size: 0.9em;
+}
+.cod-data-list {
+display: flex;
+flex-direction: column;
+gap: 2px;
+background: rgba(0,0,0,0.2);
+padding: 4px 6px;
+}
+.cod-row {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 3px 0;
+border-bottom: 1px solid rgba(255,255,255,0.05);
+font-size: 0.8em;
+}
+.cod-row:last-child {
+border-bottom: none;
+}
+.cod-row-label { color: var(--cod-text-dim); }
+.cod-row-val { color: #fff; text-align: right; }
+.cod-info-box {
+background: rgba(255,255,255,0.02);
+border: 1px solid rgba(255,255,255,0.05);
+padding: 6px;
+margin-top: 2px;
+}
+.cod-box-head {
+color: var(--cod-accent);
+font-size: 0.75em;
+font-weight: 700;
+margin-bottom: 2px;
+text-transform: uppercase;
+display: flex;
+justify-content: space-between;
+}
+.cod-box-body {
+font-size: 0.85em;
+line-height: 1.4;
+color: #ddd;
+white-space: pre-wrap;
+}
+.cod-hp-bar-bg {
+height: 4px;
+background: #333;
+width: 100%;
+margin-top: 2px;
+box-sizing: border-box;
+overflow: hidden;
+}
+.cod-hp-bar-fill {
+height: 100%;
+background: var(--cod-alert);
+width: 0%;
+max-width: 100%;
+}
+.cod-hide[data-check=''],
+.cod-hide[data-check='undefined'],
+.cod-hide[data-check='0'] {
+display: none !important;
+}
+</style>
+<div class='cod-container'>
+<div class='cod-right-col'>
+<div class='cod-header-mini'>
+<span class='cod-header-title'>OPERATOR STATUS</span>
+<span style='font-size:0.7em; color:var(--cod-text-dim); text-transform:uppercase;'>
+{{CHAR}}
+</span>
+</div>
+<div class='cod-data-list'>
+<div class='cod-row'>
+<span class='cod-row-label'>DATE</span>
+<span class='cod-row-val'>$1</span>
+</div>
+<div class='cod-row'>
+<span class='cod-row-label'>TIME</span>
+<span class='cod-row-val'>$2</span>
+</div>
+<div class='cod-row'>
+<span class='cod-row-label'>LOC</span>
+<span class='cod-row-val'>$3</span>
+</div>
+<div class='cod-row'>
+<span class='cod-row-label'>GEAR</span>
+<span class='cod-row-val'>$4</span>
+</div>
+<div class='cod-row cod-hide' data-check='$5'>
+<span class='cod-row-label'>STATE</span>
+<span class='cod-row-val'>$5$6</span>
+</div>
+</div>
+<div class='cod-info-box cod-hide' data-check='$7'>
+<div class='cod-box-head'>🎯 OBJECTIVE</div>
+<div class='cod-box-body'>$7</div>
+</div>
+<div class='cod-info-box'>
+<div class='cod-box-head'>
+<span>💖 RELATION</span>
+<span style='color:#fff;'>$8%</span>
+</div>
+<div class='cod-hp-bar-bg'>
+<div class='cod-hp-bar-fill' style='width: $8%;'></div>
+</div>
+<div class='cod-hide' data-check='$10'
+style='font-size:0.7em; color:var(--cod-alert); margin-top:2px;'>
+⚠ UPDATE: $10
+</div>
+</div>
+<div class='cod-info-box' style='flex: 1;'>
+<div class='cod-box-head' style='color:#fff;'>💬 LOG</div>
+<div class='cod-box-body'>$9</div>
+</div>
+<div style='font-size:0.7em; color:var(--cod-text-dim); text-align:right; padding-right:4px;'>
+🎵 $11
+</div>
+</div>
+</div>`
+    }
 ];
 
 /*{
