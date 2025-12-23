@@ -6,9 +6,12 @@
     <title>ST Regex Designer - Modular</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="codemirror/codemirror.css">
+    <link  rel="stylesheet" href="addon/dialog/dialog.css">
     <script src="codemirror/codemirror.js"></script>
     <script src="codemirror/xml.js"></script>
     <script src="codemirror/searchcursor.js"></script>
+    <script src="addon/search/search.js"></script>
+    <script src="addon/dialog/dialog.js"></script>
 </head>
 <body>
 
@@ -18,11 +21,7 @@
         <button class="view-btn" id="btn-content" onclick="setViewMode('content')">내용보기</button>
         <button class="view-btn" id="btn-debug" onclick="setViewMode('debug')">캡쳐($)보기</button>
         <button class="view-btn" id="theme-toggle">🌙</button>
-        
-        <!-- 토글 버튼 추가 -->
         <button class="view-btn" id="width-toggle-btn" onclick="toggleWidthControl()">📏</button>
-        
-        <!-- 숨겨진 너비 조절 패널 -->
         <div class="width-control" id="width-control">
             <input type="number" id="preview-width-input" placeholder="너비(px)" min="200" max="2000">
             <button class="view-btn" onclick="setPreviewWidth()">적용</button>
@@ -76,8 +75,17 @@
             </div>
             <div class="find-container">
                 <input type="text" id="find-query" class="find-input" placeholder="검색할 단어">
-                <button class="preset-btn search-btn" onclick="findText('prev')">↑</button>
-                <button class="preset-btn search-btn" onclick="findText('next')">↓</button>
+                <button class="preset-btn search-btn" onclick="findText('prev')">▲</button>
+                <button class="preset-btn search-btn" onclick="findText('next')">▼</button>
+                <button class="preset-btn search-btn" id="toggle-replace-btn" onclick="toggleReplaceBox()">
+                    바꾸기
+                </button>
+                </div>
+
+                <div class="find-container replace-box" id="replace-box">
+                <input type="text" id="replace-query" class="find-input" placeholder="바꿀 단어">
+                <button class="preset-btn search-btn" onclick="replaceOne()">한개만</button>
+                <button class="preset-btn search-btn" onclick="replaceAll()">모두</button>
             </div>
             <textarea id="template-input"></textarea>
         </div>
@@ -86,7 +94,29 @@
 <div class="resizer" id="resizer"></div>
     <div class="preview-side" id="preview-side">
         <div id="preview-render">
-            <div class="render-wrapper" id="render-target"></div>
+            <div class="render-wrapper" id="render-target">
+                <div class="notice-box">
+                                <h3>💡 사용 방법</h3>
+                                <span class="notice-badge step-1">1</span>채팅 내 출력 형식을 입력하세요.<br>
+                                <span class="notice-badge step-2">2</span>정규식 패턴을 입력하세요.<br>
+                                <span class="notice-badge step-3">3</span>디자인을 입력하세요.<br>
+                                <span class="notice-badge step-4">4</span>실시간으로 결과를 확인할 수 있습니다.
+                                <hr>
+                                <span class="notice-badge step-5">✔</span>프리셋을 눌러서 참고해보세요.<br>
+                                <span class="notice-badge step-5">✔</span>내용/캡쳐를 구분해서 볼 수 있습니다.<br>
+                                <span class="notice-badge step-5">✔</span>입력창 모서리를 드래그해서 크기조절하세요.<br>
+                                <hr>
+                                <h3>📌 메모</h3>
+                                <span class="note-item"></span>
+                                <span class="note-item">박스/내용이 별도인 정규식은 못봅니다. <font color=#999>(언젠간 할거임..)</font></span>
+                                <span class="note-item">(주관주의) ST에서 디자인 오류 발생시
+                                    <span class="note-item">주석처리<font color="#5a7c6f">(/*&nbsp;*/)</font>지워보기</span>
+                                    <span class="note-item">큰따옴표<font color="#5a7c6f">("&nbsp;")</font>대신 작은따옴표<font color="#5a7c6f">('&nbsp;')</font>사용해보기</span>
+                                    <span class="note-item">줄바꿈 없애보기</span>
+                                </span>
+                                <div class="update">🔔 업로드 완료<br></span></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

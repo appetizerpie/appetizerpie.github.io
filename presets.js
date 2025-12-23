@@ -1,145 +1,436 @@
 const customPresets = [
     {
-        name: "드림",
-        input: `<Dreams>🐾🐕🐈🐒...🐐?
-프라이스는 거대한 동물 보호소의 관리인이다. 사납지만 충성스러운 로트와일러(고스트), 시끄럽고 활기찬 골든 리트리버(소프), 똑똑하고 침착한 보더콜리(가즈)를 돌보는 것은 그의 일상이다. 그런데 어느 날, 라스웰이 상자 하나를 데려온다. 상자 안에는, 카피바라 한 마리가 들어있다. ₍ᐢ. ̞.ᐢ₎♡
-카피바라는 아무것도 하지 않는다. 그저 앉아서, 졸고, 가끔 무언가를 씹을 뿐이다. 개들이 짖거나, 뛰어다니거나, 서로 싸워도, 카피바라는 그저 끔뻑거릴 뿐이다. 그런데 이상하게도, 개들은 카피바라 주위에서 더 차분해진다. 로트와일러는 카피바라 옆에 누워 잠이 들고, 골든 리트리버는 카피바라에게 자신의 장난감을 가져다준다. 프라이스는 그저 팔짱을 끼고, 이 기묘하고 평화로운 광경을 바라보며 시가를 피운다. "Well, I'll be damned. (이런, 제기랄.)"
----
-프라이스의 잠은 짧았지만, 깊었다. 그의 얼굴에 걸려 있던 지휘관의 엄격함은 잠시 사라지고, 그 자리에는 희미한, 거의 아버지 같은 미소가 자리 잡고 있었다. 그는 세상의 모든 걱정을 잠시 잊은 듯 보였다. 수면의 질: 필요했던 휴식.
-</Dreams>`,
-        regex: `/<Dreams>\\s*(?:[\\w]*\\n)?(.*?)\\s*<\\/Dreams>/gs`,
+        name: "에코",
+        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션이 있다면 이런모습]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도가 이런이유로 오름]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
+        regex: `/<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>/gs`,
         template: `<style>
-.sweet-dream-box {
-    position: relative;
-    margin: 20px 10px;
-    background: linear-gradient(135deg, #2a2a5a 0%, #524285 50%, #8675a9 100%);
-    border-radius: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 
-        0 0 10px #fff, 
-        0 0 5px #a0d8ef, 
-        0 0 15px #6c5ce7,
-        inset 0 0 20px rgba(20, 10, 40, 0.4);
-    color: #fff;
-    overflow: hidden;
+.simple-mission[data-mission=""] { display: none !important; }
+.simple-score-change[data-change=""] { display: none !important; }
+.simple-container {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 12px;
+  color: #2c3e50;
+  box-shadow: 0 2px 20px rgba(81, 160, 222, 0.12);
+  max-width: 100%;
+  margin: 10px 0;
+  border: 1px solid #e8f4fc;
+  font-size: 1em;
 }
 
-.sweet-dream-box q {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-    border-radius: 6px !important;
-    padding: 1px 6px !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: none !important;
-    color: #fff !important;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+.simple-header {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #51a0de;
+  text-align: center;
 }
 
-.sd-header {
-    position: relative;
-    text-align: center;
-    padding: 12px 0 5px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    z-index: 2;
+.simple-title {
+  font-weight: 700;
+  color: #51a0de;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
-.sd-title {
-    font-size: 22px;
-    color: #fff;
-    text-shadow: 0 0 5px #fff, 0 0 10px #ff9ff3;
-    margin: 0;
-    letter-spacing: 1px;
-    font-weight: bold;
+.simple-card {
+  background: #f8fcff;
+  border-radius: 12px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e1f0fa;
+  margin-bottom: 6px;
+  transition: all 0.2s ease;
 }
 
-.sd-content {
-    position: relative;
-    padding: 15px 20px;
-    font-size: var(--messageTextFontSize, var(--mainFontSize));
-    line-height: 1.6;
-    color: #f0f2f5;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-    white-space: pre-wrap;
-    text-align: left;
-    z-index: 2;
+.simple-card:hover {
+  border-color: #51a0de;
+  box-shadow: 0 2px 8px rgba(81, 160, 222, 0.15);
 }
 
-.milky-way {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 0;
-    pointer-events: none;
+.simple-icon {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e1f0fa;
+  background: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.star-dust {
-    position: absolute;
-    left: 0;
-    width: 1px; height: 1px;
-    background: transparent;
-    box-shadow: 
-        10px 20px #fff, 40px 50px rgba(255,255,255,0.8), 90px 10px #fff,
-        20px 150px rgba(255,255,255,0.5), 60px 200px rgba(255,255,255,0.6),
-        40px 90px #a0d8ef, 260px 140px #ff9ff3, 
-        200px 50px #fff, 250px 120px rgba(255,255,255,0.7), 300px 30px #fff,
-        120px 220px rgba(255,255,255,0.8), 180px 180px rgba(255,255,255,0.5),
-        280px 280px #fff, 320px 150px rgba(255,255,255,0.9), 350px 50px rgba(255,255,255,0.6), 
-        50px 300px #fff, 550px 300px rgba(255,255,255,0.5),
-        400px 80px #fff, 450px 150px rgba(255,255,255,0.8), 500px 20px #a0d8ef,
-        550px 200px #fff, 600px 50px rgba(255,255,255,0.6), 650px 250px #ff9ff3,
-        700px 100px #fff, 750px 180px rgba(255,255,255,0.7), 800px 40px #fff;
-    animation: drift 60s linear infinite;
-    opacity: 0.8;
+.simple-flex-row { 
+  display: flex;
+  gap: 6px; 
+  margin-bottom: 8px; 
 }
 
-.big-sparkle {
-    position: absolute;
-    color: #fff;
-    animation: twinkle 3s infinite ease-in-out;
-    z-index: 1;
-    pointer-events: none;
+.simple-text-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
-.bs1 { top: 10px; left: 15px; font-size: 18px; }
-.bs2 { bottom: 15px; right: 20px; font-size: 14px; animation-delay: 1s; color: #a0d8ef; }
-.bs3 { top: 45%; right: 10px; font-size: 10px; animation-delay: 2s; opacity: 0.8; }
-.bs4 { bottom: 30%; left: 12px; font-size: 12px; animation-delay: 0.5s; color: #ff9ff3; }
-.bs5 { top: 20%; left: 40%; font-size: 8px; animation-delay: 1.5s; opacity: 0.7; }
 
-@keyframes twinkle {
-    0%, 100% { opacity: 0.3; transform: scale(0.8); text-shadow: 0 0 2px #fff; }
-    50% { opacity: 1; transform: scale(1.3); text-shadow: 0 0 8px #fff; }
+.simple-value {
+  color: #2c3e50;
+  line-height: 1.3;
 }
-@keyframes drift {
-    from { transform: translateY(0); }
-    to { transform: translateY(-300px); }
+
+.simple-mission-card {
+  background: #e8f4fc;
+  border: 1px solid #51a0de;
+  padding: 10px;
 }
+
+.simple-mission-label {
+  color: #51a0de;
+  font-weight: 600;
+}
+
+.simple-mission-text {
+  color: #2c3e50;
+}
+
+.simple-love-card {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px;
+}
+
+.simple-love-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.simple-love-label {
+  color: #FF6B6B;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.simple-love-percent {
+  color: #2c3e50;
+  padding: 0 4px;
+}
+
+.simple-progress-bg {
+  background: #f0f0f0;
+  border-radius: 10px;
+  height: 12px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.simple-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF6B6B, #FF8787);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.simple-score-change {
+  display: inline-block;
+  background: #e8f4fc;
+  color: #51a0de;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid #b8dcf7;
+  font-size: 11px;
+}
+
+.simple-divider {
+  height: 1px;
+  background: #e1f0fa;
+  margin: 2px 0;
+}
+
+.simple-thought-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.simple-thought-icon {
+  color: #51a0de;
+  margin-top: 2px;
+}
+
+.simple-thought {
+  color: #34495e;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.simple-soundtrack-card {
+  padding: 3px 10px;
+  color: #51a0de;
+  font-size: 0.9em;
+}
+
+.simple-soundtrack-text {
+  color: #34495e;
+}
+
+.simple-card-1 { flex: 1; }
+.simple-card-1-1 { flex: 1.1; }
+.simple-card-1-3 { flex: 1.3; }
 </style>
 
-<div class='sweet-dream-box'>
-    <div class='milky-way'>
-        <div class='star-dust' style='top: 0;'></div>
-        <div class='star-dust' style='top: 300px;'></div>
-        <div class='star-dust' style='top: 600px;'></div>
-    </div>
-    <div class='big-sparkle bs1'>✨</div>
-    <div class='big-sparkle bs2'>✨</div>
-    <div class='big-sparkle bs3'>✦</div>
-    <div class='big-sparkle bs4'>✦</div>
-    <div class='big-sparkle bs5'>✦</div>
+<div class='simple-container'>
+  <div class='simple-header'>
+    <div class='simple-title'>✨ &lt;{{CHAR}}&gt; STATUS INFO</div>
+  </div>
 
-    <div class='sd-header'>
-        <h2 class='sd-title'>Sweet Dreams</h2>
+  <div class='simple-flex-row'>
+    <div class='simple-card simple-card-1'>
+      <div class='simple-icon'>📅</div>
+      <div class='simple-text-group'>
+        <span class='simple-value'>$1</span>
+      </div>
     </div>
-    <div class='sd-content'>
-$1
+    <div class='simple-card simple-card-1'>
+      <div class='simple-icon'>🕒</div>
+      <div class='simple-text-group'>
+        <span class='simple-value'>$2</span>
+      </div>
     </div>
+    <div class='simple-card simple-card-1-1'>
+      <div class='simple-icon'>🌏</div>
+      <div class='simple-text-group'>
+        <span class='simple-value'>$3</span>
+      </div>
+    </div>
+    <div class='simple-card simple-card-1'>
+      <div class='simple-icon'>🧤</div>
+      <div class='simple-text-group'>
+        <span class='simple-value'>$4</span>
+      </div>
+    </div>
+    <div class='simple-card simple-card-1-3'>
+      <div class='simple-icon'>$5</div>
+      <div class='simple-text-group'>
+        <span class='simple-value'>$6</span>
+      </div>
+    </div>
+  </div>
+
+  <div class='simple-mission' data-mission='$7'>
+    <div class='simple-card simple-mission-card'>
+      <span class='simple-mission-label'>🎯 MISSION</span>
+      <span class='simple-mission-text'>$7</span>
+    </div>
+  </div>
+
+  <div class='simple-card simple-love-card'>
+    <div class='simple-love-row'>
+      <div class='simple-love-label'>
+        ♥ <span class='simple-love-percent'>$8%</span>
+      </div>
+      <div class='simple-progress-bg'>
+        <div class='simple-progress-fill' style='width: $8%;'></div>
+      </div>
+    </div>
+
+    <div class='simple-score-change' data-change='$10'>
+      🔔 $10
+    </div>
+
+    <div class='simple-divider'></div>
+
+    <div class='simple-thought-row'>
+      <div class='simple-thought-icon'>💬</div>
+      <div class='simple-thought'>$9</div>
+    </div>
+  </div>
+
+  <div class='simple-soundtrack-card'>
+    🎵 SOUNDTRACK: <span class='simple-soundtrack-text'>$11</span>
+  </div>
+</div>`},
+{
+        name: "📱COD",
+        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션이 있다면 이런모습]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도가 이런이유로 오름]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
+        regex: `/<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>/gs`,
+        template: `<style>
+.cod-container {
+--cod-bg: #0e1116;
+--cod-border: rgba(84, 193, 255, 0.3);
+--cod-accent: #54c1ff;
+--cod-alert: #ff4b4b;
+--cod-gold: #e2b714;
+--cod-text: #d1d5db;
+--cod-text-dim: #6e7681;
+background: var(--cod-bg);
+background-image:
+linear-gradient(45deg, #080a0d 25%, transparent 25%, transparent 75%, #080a0d 75%, #080a0d),
+linear-gradient(45deg, #080a0d 25%, transparent 25%, transparent 75%, #080a0d 75%, #080a0d);
+background-size: 20px 20px;
+background-position: 0 0, 10px 10px;
+border: 1px solid var(--cod-border);
+color: var(--cod-text);
+padding: 8px 10px;
+max-width: 100%;
+display: flex;
+flex-direction: column; 
+gap: 6px;
+position: relative;
+}
+.cod-right-col {
+display: flex;
+flex-direction: column;
+gap: 4px;
+min-width: 0;
+}
+.cod-header-mini {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: rgba(84, 193, 255, 0.08);
+padding: 4px 8px;
+border: 1px solid rgba(255,255,255,0.05);
+}
+.cod-header-title {
+font-weight: 700;
+color: var(--cod-accent);
+letter-spacing: 1px;
+font-size: 0.9em;
+}
+.cod-data-list {
+display: flex;
+flex-direction: column;
+gap: 2px;
+background: rgba(0,0,0,0.2);
+padding: 4px 6px;
+}
+.cod-row {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 3px 0;
+border-bottom: 1px solid rgba(255,255,255,0.05);
+font-size: 0.8em;
+}
+.cod-row:last-child {
+border-bottom: none;
+}
+.cod-row-label { color: var(--cod-text-dim); }
+.cod-row-val { color: #fff; text-align: right; }
+.cod-info-box {
+background: rgba(255,255,255,0.02);
+border: 1px solid rgba(255,255,255,0.05);
+padding: 6px;
+margin-top: 2px;
+}
+.cod-box-head {
+color: var(--cod-accent);
+font-size: 0.75em;
+font-weight: 700;
+margin-bottom: 2px;
+text-transform: uppercase;
+display: flex;
+justify-content: space-between;
+}
+.cod-box-body {
+font-size: 0.85em;
+line-height: 1.4;
+color: #ddd;
+white-space: pre-wrap;
+}
+.cod-hp-bar-bg {
+height: 4px;
+background: #333;
+width: 100%;
+margin-top: 2px;
+box-sizing: border-box;
+overflow: hidden;
+}
+.cod-hp-bar-fill {
+height: 100%;
+background: var(--cod-alert);
+width: 0%;
+max-width: 100%;
+}
+.cod-hide[data-check=''],
+.cod-hide[data-check='undefined'],
+.cod-hide[data-check='0'] {
+display: none !important;
+}
+</style>
+<div class='cod-container'>
+<div class='cod-right-col'>
+<div class='cod-header-mini'>
+<span class='cod-header-title'>OPERATOR STATUS</span>
+<span style='font-size:0.7em; color:var(--cod-text-dim); text-transform:uppercase;'>
+{{CHAR}}
+</span>
+</div>
+<div class='cod-data-list'>
+<div class='cod-row'>
+<span class='cod-row-label'>DATE</span>
+<span class='cod-row-val'>$1</span>
+</div>
+<div class='cod-row'>
+<span class='cod-row-label'>TIME</span>
+<span class='cod-row-val'>$2</span>
+</div>
+<div class='cod-row'>
+<span class='cod-row-label'>LOC</span>
+<span class='cod-row-val'>$3</span>
+</div>
+<div class='cod-row'>
+<span class='cod-row-label'>GEAR</span>
+<span class='cod-row-val'>$4</span>
+</div>
+<div class='cod-row cod-hide' data-check='$5'>
+<span class='cod-row-label'>STATE</span>
+<span class='cod-row-val'>$5$6</span>
+</div>
+</div>
+<div class='cod-info-box cod-hide' data-check='$7'>
+<div class='cod-box-head'>🎯 OBJECTIVE</div>
+<div class='cod-box-body'>$7</div>
+</div>
+<div class='cod-info-box'>
+<div class='cod-box-head'>
+<span>💖 RELATION</span>
+<span style='color:#fff;'>$8%</span>
+</div>
+<div class='cod-hp-bar-bg'>
+<div class='cod-hp-bar-fill' style='width: $8%;'></div>
+</div>
+<div class='cod-hide' data-check='$10'
+style='font-size:0.7em; color:var(--cod-alert); margin-top:2px;'>
+⚠ UPDATE: $10
+</div>
+</div>
+<div class='cod-info-box' style='flex: 1;'>
+<div class='cod-box-head' style='color:#fff;'>💬 LOG</div>
+<div class='cod-box-body'>$9</div>
+</div>
+<div style='font-size:0.7em; color:var(--cod-text-dim); text-align:right; padding-right:4px;'>
+🎵 $11
+</div>
+</div>
 </div>`
     },
-    {
+{
         name: "JARVIS",
         input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션이 있다면 이런모습]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도가 이런이유로 오름]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
         regex: `/<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>/gs`,
         template: `<style>
 .score-change-hud[data-change=""] { display: none !important; }
-.glass-panel[data-mission=""] { display: none !important; }
+.hud-value-mobile[data-change=""] { display: none !important; }
+.panel-decor[data-mission=""] { display: none !important; }
+.stream-line[data-mission=""] { display: none !important; }
+.active-line[data-mission=""] { display: none !important; }
 .jarvis-wrapper {
 position: relative;
 background-color: #020b14;
@@ -149,6 +440,7 @@ padding: 20px;
 border: 1px solid rgba(0, 243, 255, 0.3);
 box-shadow: 0 0 50px rgba(0,0,0,0.8) inset;
 min-height: 400px;
+font-size: var(--messageTextFontSize) !important;
 }
 .bg-hud-layer {
 position: absolute;
@@ -532,7 +824,6 @@ padding-bottom: 5px;
 margin-bottom: 10px;
 font-weight: bold;
 letter-spacing: 2px;
-font-size: 0.9em;
 }
 .info-panel-text {
 padding: 12px 15px;
@@ -540,35 +831,69 @@ padding: 12px 15px;
 .info-text-grid {
 display: flex;
 flex-direction: column;
-gap: 8px;
 }
 .info-text-row {
 display: flex;
 justify-content: space-between;
 align-items: center;
-padding: 3px 0;
-border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+padding: 8px 0;
+position: relative;
+}
+.info-text-row::before {
+content: "";
+position: absolute;
+left: 0;
+right: 0;
+bottom: 0;
+height: 1px;
+background: linear-gradient(
+90deg,
+rgba(0, 243, 255, 0.0) 0%,
+rgba(0, 243, 255, 0.25) 10%,
+rgba(0, 243, 255, 0.25) 90%,
+rgba(0, 243, 255, 0.0) 100%
+);
+pointer-events: none;
+}
+.info-text-row:last-child::before {
+display: none;
 }
 .info-text-row:last-child {
 border-bottom: none;
 }
+.info-row-date-time {
+display: grid;
+grid-template-columns: 1fr auto 1fr auto;
+gap: 20px;
+align-items: center;
+}
+.info-date-group,
+.info-time-group,
+.info-location-group,
+.info-outfit-group {
+display: contents;
+}
+.info-date-group,
+.info-location-group, {
+justify-content: flex-start;
+}
+.info-time-group,
+.info-outfit-group {
+justify-content: flex-end;
+}
 .info-label {
-font-size: 0.85em;
 color: rgba(0, 243, 255, 0.3);
 text-transform: uppercase;
 letter-spacing: 1px;
 font-weight: 600;
-min-width: 120px;
 }
 .info-value {
-font-size: 0.9em;
 color: #fff;
 text-align: right;
 text-shadow: 0 0 5px rgba(0, 243, 255, 0.6);
 flex: 1;
 }
 .log-stream {
-font-size: 0.9em;
 line-height: 1.6;
 }
 .stream-line {
@@ -587,6 +912,12 @@ animation: blink 1s step-end infinite;
 display: flex;
 gap: 20px;
 align-items: center;
+}
+.affection-column-layout {
+display: flex;
+flex-direction: column;
+gap: 10px;
+flex: 1;
 }
 .circular-hud-container {
 flex-shrink: 0;
@@ -739,6 +1070,16 @@ font-weight: bold;
 text-shadow: 0 0 8px #00f3ff;
 white-space: nowrap;
 }
+.hud-value-mobile {
+display: none;
+padding: 8px 12px;
+background: rgba(0, 243, 255, 0.1);
+border-left: 3px solid #00f3ff;
+border-radius: 2px;
+color: #00f3ff;
+font-weight: bold;
+text-shadow: 0 0 8px #00f3ff;
+}
 .analysis-section {
 flex: 1;
 display: flex;
@@ -752,7 +1093,6 @@ border-left: 2px solid #00f3ff;
 flex: 1;
 }
 .thought-label {
-font-size: 0.85em;
 margin-bottom: 8px;
 opacity: 0.8;
 font-weight: bold;
@@ -760,7 +1100,6 @@ font-weight: bold;
 .thought-text {
 line-height: 1.6;
 color: #fff;
-font-size: 0.9em;
 }
 .corner-bracket {
 position: absolute;
@@ -772,8 +1111,63 @@ border: 2px solid #00f3ff;
 .br-bl { bottom: -1px; left: -1px; border-top: none; border-right: none; }
 .br-br { bottom: -1px; right: -1px; border-top: none; border-left: none; }
 .scroll-text {
-font-size: 0.7em;
+font-size: 0.8em;
 opacity: 0.7;
+}
+@media (max-width: 768px) {
+.jarvis-wrapper { padding: 15px; }
+.bg-side-deco { display: none; }
+.info-panel-text { padding: 10px; }
+.affection-content-horizontal { flex-direction: column; align-items: stretch; gap: 0; }
+.circular-hud-container { display: flex; justify-content: center; }
+.affection-column-layout { width: 100%; }
+.hud-menu-row { display: none; }
+.hud-value-mobile { display: block; }
+.bg-jarvis-text {
+font-size: 2.5em;
+}
+.info-text-grid {
+display: flex !important;
+flex-direction: column !important;
+gap: 6px !important;
+}
+.info-text-row {
+border-bottom: none;
+padding: 0;
+}
+.info-text-row.info-row-date-time:first-child {
+display: flex !important;
+flex-direction: column !important;
+gap: 4px !important;
+}
+.info-text-row.info-row-date-time:first-child .info-date-group,
+.info-text-row.info-row-date-time:first-child .info-time-group {
+display: flex !important;
+justify-content: space-between !important;
+width: 100% !important;
+border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+padding: 4px 0;
+}
+.info-text-row.info-row-date-time:nth-child(2) {
+display: flex;
+flex-direction: column;
+gap: 4px;
+}
+.info-text-row.info-row-date-time:nth-child(2) .info-location-group,
+.info-text-row.info-row-date-time:nth-child(2) .info-outfit-group {
+display: inline-flex;
+justify-content: space-between;
+width: 100% !important;
+border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+padding: 4px 0;
+}
+.info-label {
+font-size: 0.8em;
+text-align: left;
+}
+.info-value {
+text-align: right;
+}
 }
 </style>
 <div class='jarvis-wrapper'>
@@ -844,27 +1238,25 @@ opacity: 0.7;
 <div class='main-display'>
 <div class='glass-panel info-panel-text'>
 <div class='info-text-grid'>
-<div class='info-text-row' style='gap: 30px;'>
-<div style='display: flex; gap: 10px; flex: 1;'>
+<div class='info-text-row info-row-date-time'>
+<div class='info-date-group'>
 <span class='info-label'>Date</span>
-<span class='info-value' style='flex: 1;'>$1</span>
+<span class='info-value'>$1</span>
 </div>
-<div style='display: flex; gap: 10px; flex: 1;'>
+<div class='info-time-group'>
 <span class='info-label'>Time</span>
-<span class='info-value' style='flex: 1;'>$2</span>
+<span class='info-value'>$2</span>
 </div>
 </div>
-<div class='info-text-row'>
+<div class='info-text-row info-row-date-time'>
+<div class='info-location-group'>
 <span class='info-label'>Location</span>
 <span class='info-value'>$3</span>
 </div>
-<div class='info-text-row'>
+<div class='info-outfit-group'>
 <span class='info-label'>Outfit</span>
 <span class='info-value'>$4</span>
 </div>
-<div class='info-text-row'>
-<span class='info-label'>$5</span>
-<span class='info-value'>$6</span>
 </div>
 </div>
 <div class='corner-bracket br-tl'></div>
@@ -872,14 +1264,16 @@ opacity: 0.7;
 <div class='corner-bracket br-bl'></div>
 <div class='corner-bracket br-br'></div>
 </div>
-<div class='glass-panel' data-mission='$7'>
-<div class='panel-header'>ACTIVE LOG
-<div class='panel-decor'>// MISSION</div>
+<div class='glass-panel'>
+<div class='panel-header'>
+ACTIVE LOG
+<div class='panel-decor' data-mission='$7'>// MISSION</div>
 </div>
 <div class='log-stream'>
-<div class='stream-line'>> SYSTEM INITIALIZED...</div>
-<div class='stream-line'>> CONNECTING TO SERVER...</div>
-<div class='stream-line active-line'>> $7<span class='cursor'>_</span></div>
+<div class='stream-line'>> EMOTIONAL SYSTEM...CONNECTING...</div>
+<div class='stream-line active-line'>> $5 $6<span class='cursor'>_</span></div>
+<div class='stream-line' data-mission='$7'>> PRIMARY OBJECTIVE...</div>
+<div class='stream-line active-line' data-mission='$7'>> $7<span class='cursor'>_</span></div>
 </div>
 <div class='corner-bracket br-tl'></div>
 <div class='corner-bracket br-tr'></div>
@@ -891,7 +1285,7 @@ opacity: 0.7;
 <div class='circular-hud-container'>
 <div class='wobbling-element'>
 <div class='percentage-counter'>$8%</div>
-<svg width='150' height='150' viewBox='-100 -100 200 200'>
+<svg width='120' height='120' viewBox='-100 -100 200 200'>
 <circle class='outer_circle' cx='0' cy='0' r='99' pathLength='100' />
 <circle class='outer_circle_bars_l' cx='0' cy='0' r='96' pathLength='64' />
 <circle class='outer_circle_bars_r' cx='0' cy='0' r='96' pathLength='64' />
@@ -916,6 +1310,7 @@ opacity: 0.7;
 </svg>
 </div>
 </div>
+<div class='affection-column-layout'>
 <div class='analysis-section'>
 <div class='score-change-hud' data-change='$10'>
 <div class='hud-menu-row'>
@@ -926,11 +1321,15 @@ opacity: 0.7;
 <div class='hud-value'>$10</div>
 </div>
 </div>
+<div class='hud-value-mobile' data-change='$10'>
+▲ $10
+</div>
 <div class='thought-box-compact'>
 <div class='thought-label'>💬 INTERNAL ANALYSIS</div>
 <div class='thought-text'>$9</div>
 </div>
 <div class='scroll-text'>/// SOUNDTRACK: $11</div>
+</div>
 </div>
 </div>
 <div class='corner-bracket br-tl'></div>
@@ -941,431 +1340,253 @@ opacity: 0.7;
 </div>
 </div>
 </div>
-`
-    },
-    {
-        name: "에코",
-        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션이 있다면 이런모습]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도가 이런이유로 오름]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
-        regex: `/<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>/gs`,
-        template: `<style>
-.simple-mission[data-mission=""] { display: none !important; }
-.simple-score-change[data-change=""] { display: none !important; }
 
-.simple-container {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 12px;
-  color: #2c3e50;
-  box-shadow: 0 2px 20px rgba(81, 160, 222, 0.12);
-  max-width: 100%;
-  margin: 10px 0;
-  border: 1px solid #e8f4fc;
-  font-size: 1em;
-}
-
-.simple-header {
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #51a0de;
-  text-align: center;
-}
-
-.simple-title {
-  font-weight: 700;
-  color: #51a0de;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.simple-card {
-  background: #f8fcff;
-  border-radius: 12px;
-  padding: 8px 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid #e1f0fa;
-  margin-bottom: 6px;
-  transition: all 0.2s ease;
-}
-
-.simple-card:hover {
-  border-color: #51a0de;
-  box-shadow: 0 2px 8px rgba(81, 160, 222, 0.15);
-}
-
-.simple-icon {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #e1f0fa;
-  background: #ffffff;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.simple-flex-row { 
-  display: flex;
-  gap: 6px; 
-  margin-bottom: 8px; 
-}
-
-.simple-text-group {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.simple-value {
-  color: #2c3e50;
-  line-height: 1.3;
-}
-
-.simple-mission-card {
-  background: #e8f4fc;
-  border: 1px solid #51a0de;
-  padding: 10px;
-}
-
-.simple-mission-label {
-  color: #51a0de;
-  font-weight: 600;
-}
-
-.simple-mission-text {
-  color: #2c3e50;
-}
-
-.simple-love-card {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 10px;
-  padding: 12px;
-}
-
-.simple-love-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.simple-love-label {
-  color: #FF6B6B;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 0 0 auto;
-  white-space: nowrap;
-}
-
-.simple-love-percent {
-  color: #2c3e50;
-  padding: 0 4px;
-}
-
-.simple-progress-bg {
-  background: #f0f0f0;
-  border-radius: 10px;
-  height: 12px;
-  flex: 1;
-  overflow: hidden;
-}
-
-.simple-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #FF6B6B, #FF8787);
-  border-radius: 10px;
-  transition: width 0.5s ease;
-}
-
-.simple-score-change {
-  display: inline-block;
-  background: #e8f4fc;
-  color: #51a0de;
-  padding: 5px 10px;
-  border-radius: 8px;
-  border: 1px solid #b8dcf7;
-  font-size: 11px;
-}
-
-.simple-divider {
-  height: 1px;
-  background: #e1f0fa;
-  margin: 2px 0;
-}
-
-.simple-thought-row {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-}
-
-.simple-thought-icon {
-  color: #51a0de;
-  margin-top: 2px;
-}
-
-.simple-thought {
-  color: #34495e;
-  line-height: 1.6;
-  flex: 1;
-}
-
-.simple-soundtrack-card {
-  padding: 3px 10px;
-  color: #51a0de;
-  font-size: 0.9em;
-}
-
-.simple-soundtrack-text {
-  color: #34495e;
-}
-
-.simple-card-1 { flex: 1; }
-.simple-card-1-1 { flex: 1.1; }
-.simple-card-1-3 { flex: 1.3; }
-</style>
-
-<div class='simple-container'>
-  <div class='simple-header'>
-    <div class='simple-title'>✨ &lt;{{CHAR}}&gt; STATUS INFO</div>
-  </div>
-
-  <div class='simple-flex-row'>
-    <div class='simple-card simple-card-1'>
-      <div class='simple-icon'>📅</div>
-      <div class='simple-text-group'>
-        <span class='simple-value'>$1</span>
-      </div>
-    </div>
-    <div class='simple-card simple-card-1'>
-      <div class='simple-icon'>🕒</div>
-      <div class='simple-text-group'>
-        <span class='simple-value'>$2</span>
-      </div>
-    </div>
-    <div class='simple-card simple-card-1-1'>
-      <div class='simple-icon'>🌏</div>
-      <div class='simple-text-group'>
-        <span class='simple-value'>$3</span>
-      </div>
-    </div>
-    <div class='simple-card simple-card-1'>
-      <div class='simple-icon'>🧤</div>
-      <div class='simple-text-group'>
-        <span class='simple-value'>$4</span>
-      </div>
-    </div>
-    <div class='simple-card simple-card-1-3'>
-      <div class='simple-icon'>$5</div>
-      <div class='simple-text-group'>
-        <span class='simple-value'>$6</span>
-      </div>
-    </div>
-  </div>
-
-  <div class='simple-mission' data-mission='$7'>
-    <div class='simple-card simple-mission-card'>
-      <span class='simple-mission-label'>🎯 MISSION</span>
-      <span class='simple-mission-text'>$7</span>
-    </div>
-  </div>
-
-  <div class='simple-card simple-love-card'>
-    <div class='simple-love-row'>
-      <div class='simple-love-label'>
-        ♥ <span class='simple-love-percent'>$8%</span>
-      </div>
-      <div class='simple-progress-bg'>
-        <div class='simple-progress-fill' style='width: $8%;'></div>
-      </div>
-    </div>
-
-    <div class='simple-score-change' data-change='$10'>
-      🔔 $10
-    </div>
-
-    <div class='simple-divider'></div>
-
-    <div class='simple-thought-row'>
-      <div class='simple-thought-icon'>💬</div>
-      <div class='simple-thought'>$9</div>
-    </div>
-  </div>
-
-  <div class='simple-soundtrack-card'>
-    🎵 SOUNDTRACK: <span class='simple-soundtrack-text'>$11</span>
-  </div>
-</div>`},
+`},
 {
-        name: "COD",
+        name: "DP",
         input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션이 있다면 이런모습]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도가 이런이유로 오름]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
         regex: `/<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>/gs`,
         template: `<style>
-.cod-container {
---cod-bg: #0e1116;
---cod-border: rgba(84, 193, 255, 0.3);
---cod-accent: #54c1ff;
---cod-alert: #ff4b4b;
---cod-gold: #e2b714;
---cod-text: #d1d5db;
---cod-text-dim: #6e7681;
-background: var(--cod-bg);
-background-image:
-linear-gradient(45deg, #080a0d 25%, transparent 25%, transparent 75%, #080a0d 75%, #080a0d),
-linear-gradient(45deg, #080a0d 25%, transparent 25%, transparent 75%, #080a0d 75%, #080a0d);
+.dp-mission[data-mission=""] { display: none !important; }
+.dp-score-change[data-change=""]  { display: none !important; }
+.dp-container {
+background: #1a1a1a;
+background-image: radial-gradient(#330000 15%, transparent 16%), radial-gradient(#330000 15%, transparent 16%);
 background-size: 20px 20px;
 background-position: 0 0, 10px 10px;
-border: 1px solid var(--cod-border);
-color: var(--cod-text);
-padding: 8px 10px;
+border: 3px solid #222;
+border-radius: 4px;
+padding: 15px;
+color: #eee;
+box-shadow: 5px 5px 0px #8B0000;
 max-width: 100%;
+margin: 15px 0;
+position: relative;
+overflow: visible;
+font-size: var(--messageTextFontSize) !important;
+}
+.dp-bullet-svg {
+position: absolute;
+width: 45px;
+height: 45px;
+z-index: 10;
+pointer-events: none;
+filter: drop-shadow(3px 3px 0px rgba(0,0,0,0.5));
+}
+.dp-header {
+background: #c41e3a;
+color: #fff;
+padding: 8px;
+text-align: center;
+font-weight: 900;
+font-size: 1.4em;
+text-transform: uppercase;
+box-shadow: 3px 3px 0 #000;
+margin-bottom: 15px;
+border: 2px solid #000;
+letter-spacing: 1px;
+}
+.dp-mask-icon {
+display: inline-block;
+background: #000;
+color: #fff;
+padding: 2px 6px;
+border-radius: 50%;
+vertical-align: middle;
+}
+.dp-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+margin-bottom: 10px;
+}
+.dp-info-box {
+background: #2a2a2a;
+border-left: 4px solid #c41e3a;
+padding: 6px 10px;
 display: flex;
-flex-direction: column; 
-gap: 6px;
+align-items: center;
+gap: 8px;
+}
+.dp-mission {
+background: #c41e3a;
+color: #fff;
+padding: 10px;
+margin: 10px 0;
+font-weight: bold;
+border: 2px solid #000;
+box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
 position: relative;
 }
-.cod-right-col {
-display: flex;
-flex-direction: column;
-gap: 4px;
-min-width: 0;
+.dp-mission::before {
+content: '🔪 TARGET';
+display: inline-block;
+background: #000;
+color: #fff;
+width: fit-content;
+padding: 2px 12px 2px 6px;
+margin-right: 6px;
 }
-.cod-header-mini {
-display: flex;
-justify-content: space-between;
-align-items: center;
-background: rgba(84, 193, 255, 0.08);
-padding: 4px 8px;
-border: 1px solid rgba(255,255,255,0.05);
+.dp-love-container {
+background: #0d0d0d;
+padding: 15px 12px;
+border: 1px solid #444;
+border-radius: 6px;
+margin-bottom: 10px;
+position: relative;
+z-index: 3;
 }
-.cod-header-title {
-font-weight: 700;
-color: var(--cod-accent);
-letter-spacing: 1px;
-font-size: 0.9em;
-}
-.cod-data-list {
-display: flex;
-flex-direction: column;
-gap: 2px;
-background: rgba(0,0,0,0.2);
-padding: 4px 6px;
-}
-.cod-row {
+.dp-love-header {
 display: flex;
 justify-content: space-between;
 align-items: center;
-padding: 3px 0;
-border-bottom: 1px solid rgba(255,255,255,0.05);
-font-size: 0.8em;
+flex-wrap: wrap;
 }
-.cod-row:last-child {
-border-bottom: none;
+.dp-unicorn-label {
+color: #ff69b4;
+font-weight: bold;
+font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+font-style: italic;
+letter-spacing: -0.5px;
 }
-.cod-row-label { color: var(--cod-text-dim); }
-.cod-row-val { color: #fff; text-align: right; }
-.cod-info-box {
-background: rgba(255,255,255,0.02);
-border: 1px solid rgba(255,255,255,0.05);
-padding: 6px;
-margin-top: 2px;
-}
-.cod-box-head {
-color: var(--cod-accent);
-font-size: 0.75em;
-font-weight: 700;
-margin-bottom: 2px;
-text-transform: uppercase;
-display: flex;
-justify-content: space-between;
-}
-.cod-box-body {
+.dp-score-change {
+text-align: right;
+margin-top: 5px;
 font-size: 0.85em;
-line-height: 1.4;
-color: #ddd;
-white-space: pre-wrap;
+color: #ff69b4;
 }
-.cod-hp-bar-bg {
+.dp-slider-wrapper {
+position: relative;
+height: 30px;
+display: flex;
+align-items: center;
+}
+.dp-slider-track {
+position: absolute;
+top: 50%;
+left: 0;
+right: 0;
 height: 4px;
 background: #333;
-width: 100%;
-margin-top: 2px;
-box-sizing: border-box;
-overflow: hidden;
+border-radius: 2px;
+transform: translateY(-50%);
+border: 1px solid #555;
 }
-.cod-hp-bar-fill {
-height: 100%;
-background: var(--cod-alert);
-width: 0%;
-max-width: 100%;
+.dp-slider-fill {
+position: absolute;
+top: 50%;
+height: 4px;
+background: repeating-linear-gradient(45deg, #c41e3a, #c41e3a 10px, #ff69b4 10px, #ff69b4 20px);
+transform: translateY(-50%);
 }
-.cod-hide[data-check=''],
-.cod-hide[data-check='undefined'],
-.cod-hide[data-check='0'] {
-display: none !important;
+.dp-slider-thumb {
+position: absolute;
+top: 50%;
+transform: translate(-50%, -50%);
+font-size: 24px;
+line-height: 1;
+filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+transition: left 0.5s ease;
+z-index: 2;
+}
+.dp-thought-box {
+background: #fff4a8;
+border: 2px solid #000;
+padding: 12px;
+color: #000;
+font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+line-height: 1.4;
+position: relative;
+margin-top: 10px;
+box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+font-weight: 500;
+}
+.dp-thought-box::before {
+content: '$5 $6';
+position: absolute;
+top: -10px;
+left: 10px;
+background: #000;
+color: #fff;
+font-size: 0.8em;
+padding: 1px 4px;
+border: 1px solid #fff4a8;
+}
+.dp-soundtrack {
+margin-top: 12px;
+border-top: 1px dashed #444;
+padding-top: 8px;
+font-size: 0.85em;
+color: #888;
+display: flex;
+align-items: center;
+gap: 6px;
+z-index: 3;
+position: relative;
+}
+.dp-soundtrack-title {
+color: #c41e3a;
+font-weight: bold;
 }
 </style>
-<div class='cod-container'>
-<div class='cod-right-col'>
-<div class='cod-header-mini'>
-<span class='cod-header-title'>OPERATOR STATUS</span>
-<span style='font-size:0.7em; color:var(--cod-text-dim); text-transform:uppercase;'>
-{{CHAR}}
-</span>
+<div class='dp-container'>
+<svg class='dp-bullet-svg' style='top: -5px; right: 5px; transform: rotate(-30deg);' viewBox='0 0 100 100'>
+<g stroke='#000' stroke-width='3' fill='none' stroke-linecap='round'>
+<line x1='90' y1='50' x2='80' y2='50' />
+</g>
+<path d='M50 25 L60 40 L80 35 L70 50 L85 65 L65 65 L55 85 L45 65 L25 70 L35 50 L15 35 L40 40 Z' fill='#fff' stroke='#000' stroke-width='3' stroke-linejoin='round'/>
+<circle cx='50' cy='50' r='12' fill='#000'/>
+</svg>
+<svg class='dp-bullet-svg' style='bottom: 15px; left: -5px; transform: rotate(25deg);' viewBox='0 0 100 100'>
+<g stroke='#000' stroke-width='3' fill='none' stroke-linecap='round'>
+<line x1='10' y1='50' x2='20' y2='50' />
+</g>
+<path d='M35 30 L40 40 L55 35 L45 50 L50 60 L35 55 L30 70 L25 55 L10 50 L25 45 L20 30 Z' fill='#fff' stroke='#000' stroke-width='2.5' stroke-linejoin='round'/>
+<circle cx='32' cy='50' r='8' fill='#000'/>
+</svg>
+<svg class='dp-bullet-svg' style='top: 70px; right: -5px; transform: rotate(-15deg);' viewBox='0 0 100 100'>
+<path d='M65 40 L70 50 L85 45 L75 60 L80 70 L65 65 L60 80 L55 65 L40 60 L55 55 L50 40 Z' fill='#fff' stroke='#000' stroke-width='2.5' stroke-linejoin='round'/>
+<circle cx='65' cy='60' r='8' fill='#000'/>
+</svg>
+<svg class='dp-bullet-svg' style='bottom: -15px; right: 20px; transform: rotate(-90deg);' viewBox='0 0 100 100'>
+<path d='M65 40 L70 50 L85 45 L75 60 L80 70 L65 65 L60 80 L55 65 L40 60 L55 55 L50 40 Z' fill='#fff' stroke='#000' stroke-width='2.5' stroke-linejoin='round'/>
+<circle cx='65' cy='60' r='8' fill='#000'/>
+</svg>
+<svg class='dp-bullet-svg' style='top: 185px; right: 25px; transform: rotate(40deg);' viewBox='0 0 100 100'>
+<g stroke='#000' stroke-width='3' fill='none' stroke-linecap='round'>
+<line x1='10' y1='50' x2='20' y2='50' />
+<line x1='50' y1='10' x2='50' y2='20' />
+</g>
+<path d='M50 25 L60 40 L80 35 L70 50 L85 65 L65 65 L55 85 L45 65 L25 70 L35 50 L15 35 L40 40 Z' fill='#fff' stroke='#000' stroke-width='3' stroke-linejoin='round'/>
+<circle cx='50' cy='50' r='12' fill='#000'/>
+</svg>
+<div class='dp-header'>
+<span class='dp-mask-icon'>XX</span> MAXIMUM EFFORT
 </div>
-<div class='cod-data-list'>
-<div class='cod-row'>
-<span class='cod-row-label'>DATE</span>
-<span class='cod-row-val'>$1</span>
+<div class='dp-grid'>
+<div class='dp-info-box'><span>📅</span> <span>$1</span></div>
+<div class='dp-info-box'><span>🕒</span> <span>$2</span></div>
+<div class='dp-info-box'><span>📍</span> <span>$3</span></div>
+<div class='dp-info-box'><span>🧤</span> <span>$4</span></div>
 </div>
-<div class='cod-row'>
-<span class='cod-row-label'>TIME</span>
-<span class='cod-row-val'>$2</span>
+<div class='dp-mission' data-mission='$7'>$7</div>
+<div class='dp-love-container'>
+<div class='dp-love-header'>
+<div class='dp-unicorn-label'>UNICORN METER ❤ $8%</div>
+<div class='dp-score-change' data-change='$10'>Running Hot! ($10)</div>
 </div>
-<div class='cod-row'>
-<span class='cod-row-label'>LOC</span>
-<span class='cod-row-val'>$3</span>
+<div class='dp-slider-wrapper'>
+<div class='dp-slider-track'></div>
+<div class='dp-slider-fill' style='width: $8%;'></div>
+<div class='dp-slider-thumb' style='left: $8%;'>🦄</div>
 </div>
-<div class='cod-row'>
-<span class='cod-row-label'>GEAR</span>
-<span class='cod-row-val'>$4</span>
+<div class='dp-thought-box'>$9</div>
 </div>
-<div class='cod-row cod-hide' data-check='$5'>
-<span class='cod-row-label'>STATE</span>
-<span class='cod-row-val'>$5$6</span>
+<div class='dp-soundtrack'>
+<span>📼 MIXTAPE:</span>
+<span class='dp-soundtrack-title'>$11</span>
 </div>
-</div>
-<div class='cod-info-box cod-hide' data-check='$7'>
-<div class='cod-box-head'>🎯 OBJECTIVE</div>
-<div class='cod-box-body'>$7</div>
-</div>
-<div class='cod-info-box'>
-<div class='cod-box-head'>
-<span>💖 RELATION</span>
-<span style='color:#fff;'>$8%</span>
-</div>
-<div class='cod-hp-bar-bg'>
-<div class='cod-hp-bar-fill' style='width: $8%;'></div>
-</div>
-<div class='cod-hide' data-check='$10'
-style='font-size:0.7em; color:var(--cod-alert); margin-top:2px;'>
-⚠ UPDATE: $10
-</div>
-</div>
-<div class='cod-info-box' style='flex: 1;'>
-<div class='cod-box-head' style='color:#fff;'>💬 LOG</div>
-<div class='cod-box-body'>$9</div>
-</div>
-<div style='font-size:0.7em; color:var(--cod-text-dim); text-align:right; padding-right:4px;'>
-🎵 $11
-</div>
-</div>
-</div>`
-    }
+</div>`}
 ];
 
 /*{
