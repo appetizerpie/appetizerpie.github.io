@@ -229,7 +229,7 @@ h2 { margin: 0; }
   border-right: 1px solid var(--border);
   padding: 20px;
   gap: 20px;
-  overflow-y: auto;
+  overflow-y: visible;
   background: var(--panel);
   backdrop-filter: blur(10px);
   border-radius: 12px;
@@ -423,16 +423,20 @@ textarea::-webkit-resizer {
   border: 2px solid var(--border);
   border-radius: 8px;
   font-size: 0.85rem;
-  touch-action: pan-y;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .CodeMirror-scroll {
-touch-action: pan-y;
 -webkit-overflow-scrolling: touch;
 }
 
 .CodeMirror-lines {
-touch-action: pan-y;
+padding: 4px 0;
+}
+
+.CodeMirror pre {
+padding: 0 4px;
 }
 
 /* 창크기 조절 */
@@ -509,7 +513,7 @@ touch-action: pan-y;
 }
 
 @media (max-width: 768px) {
-  body { padding: 10px; font-size: 14px; }
+  body { padding: 10px; font-size: 14px; overflow-y: auto; }
   
   header {
     padding: 0.6rem 1rem;
@@ -534,7 +538,7 @@ touch-action: pan-y;
   
   .mobile-tabs { display: flex; }
   
-  .container { flex-direction: column; gap: 0; }
+  .container { flex-direction: column; gap: 0; overflow-y: visible; }
   
   .editor-side {
     width: 100%;
@@ -544,6 +548,7 @@ touch-action: pan-y;
     border-radius: 12px;
     margin-bottom: 10px;
     overflow-y: visible;
+    overflow-x: visible;
   }
   
   .preview-side { width: 100%; border-radius: 12px; }
@@ -554,8 +559,32 @@ touch-action: pan-y;
   textarea { font-size: 14px; padding: 10px; }
   #raw-input { min-height: 100px; }
   
-  .find-input { font-size: 14px !important; padding: 10px !important; }
-  .search-btn { font-size: 1rem; }
+  .find-input { 
+    font-size: 14px !important;
+    padding: 10px !important; 
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+
+  .search-btn { 
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    min-width: auto;
+    flex: 1;
+  }
+
+  #toggle-replace-btn {
+    flex: 1.2;
+  }
+
+  .replace-box .find-container {
+    flex-wrap: wrap;
+    }
+
+  .replace-box .search-btn {
+    flex: 1;
+    min-width: auto;
+  }
   
   label { font-size: 0.7rem; }
   .group-header { padding: 12px; font-size: 0.8rem; }
@@ -573,11 +602,14 @@ touch-action: pan-y;
     word-break: break-all;
   }
   
-  .CodeMirror { min-height: 150px; max-height: 300px; font-size: 14px; }
+  .CodeMirror { min-height: 150px; max-height: 300px; font-size: 14px; overflow: auto !important; }
 
   .CodeMirror-scroll {
+    min-height: 150px;
+    max-height: 300px;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
     }
 
   #preview-render { padding: 15px; }

@@ -29,7 +29,9 @@ window.onload = function() {
             mode: 'xml',
             lineNumbers: true,
             lineWrapping: true,
-            theme: 'default'
+            theme: 'default',
+            inputStyle: 'contenteditable',
+            touchDragDelay: 200
         });
 
         editor.on('change', () => {
@@ -47,12 +49,15 @@ window.onload = function() {
 /* 모바일 초기 뷰 설정 */
 function initMobileView() {
     if (window.innerWidth <= 768) {
+        const editorSide = document.getElementById('editor-side');
         const previewSide = document.getElementById('preview-side');
-        previewSide.classList.add('hidden');
+        editorSide.classList.add('hidden');
+        previewSide.classList.remove('hidden');
 
         const tabs = document.querySelectorAll('.mobile-tab');
         if (tabs.length > 0) {
-            tabs[0].classList.add('active');
+            tabs[1].classList.add('active');
+            tabs[0].classList.remove('active');
         }
     }
 }
