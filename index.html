@@ -6,20 +6,19 @@
     <title>ST Regex Designer - Modular</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="codemirror/codemirror.css">
-    <link  rel="stylesheet" href="addon/dialog/dialog.css">
+    <link  rel="stylesheet" href="codemirror/dialog.css">
     <script src="codemirror/codemirror.js"></script>
     <script src="codemirror/xml.js"></script>
     <script src="codemirror/searchcursor.js"></script>
-    <script src="addon/search/search.js"></script>
-    <script src="addon/dialog/dialog.js"></script>
+    <script src="codemirror/search.js"></script>
+    <script src="codemirror/dialog.js"></script>
 </head>
 <body>
 
 <header>
     <h2>🎨 ST 정규식 디자인 미리보기</h2>
     <div class="view-modes">
-        <button class="view-btn" id="btn-content" onclick="setViewMode('content')">내용보기</button>
-        <button class="view-btn" id="btn-debug" onclick="setViewMode('debug')">캡쳐($)보기</button>
+        <button class="view-btn" id="view-toggle" onclick="toggleViewMode()">내용보기</button>
         <button class="view-btn" id="theme-toggle">🌙</button>
         <button class="view-btn" id="width-toggle-btn" onclick="toggleWidthControl()">📏</button>
         <div class="width-control" id="width-control">
@@ -102,7 +101,7 @@
                                 <span class="notice-badge step-3">3</span>디자인을 입력하세요.<br>
                                 <span class="notice-badge step-4">4</span>실시간으로 결과를 확인할 수 있습니다.
                                 <hr>
-                                <span class="notice-badge step-5">✔</span>프리셋을 눌러서 참고해보세요.<br>
+                                <span class="notice-badge step-5">✔</span>프리셋을 눌러서 미리보기.<br>
                                 <span class="notice-badge step-5">✔</span>내용/캡쳐를 구분해서 볼 수 있습니다.<br>
                                 <span class="notice-badge step-5">✔</span>입력창 모서리를 드래그해서 크기조절하세요.<br>
                                 <hr>

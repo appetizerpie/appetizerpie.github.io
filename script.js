@@ -30,8 +30,8 @@ window.onload = function() {
             lineNumbers: true,
             lineWrapping: true,
             theme: 'default',
-            inputStyle: 'contenteditable',
-            touchDragDelay: 200
+            //inputStyle: 'contenteditable',
+            //touchDragDelay: 200
         });
 
         editor.on('change', () => {
@@ -216,17 +216,25 @@ function initPresets() {
 }
 
 /* 5. 뷰 모드 설정 */
+function toggleViewMode() {
+    const viewToggle = document.getElementById('view-toggle');
+    
+    if (viewMode === 'content') {
+        viewMode = 'debug';
+        viewToggle.innerText = '캡쳐보기';
+    } else {
+        viewMode = 'content';
+        viewToggle.innerText = '내용보기';
+    }
+    
+    render();
+}
+
 function setViewMode(mode) {
     viewMode = mode;
-    const btnContent = document.getElementById('btn-content');
-    const btnDebug = document.getElementById('btn-debug');
-
-    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-
-    if (mode === 'content') {
-        btnContent.classList.add('active');
-    } else {
-        btnDebug.classList.add('active');
+    const viewToggle = document.getElementById('view-toggle');
+    if (viewToggle) {
+        viewToggle.innerText = mode === 'content' ? '내용보기' : '캡쳐보기';
     }
     render();
 }
@@ -236,21 +244,26 @@ function render() {
     const text = rawInput.value;
     let regexStr = regexInput.value.trim();
     const template = getTemplateValue();
-
+    
     regexError.style.display = 'none';
     groupList.innerHTML = '';
+    
+    const headerSpan = document.querySelector('.group-header span');
+    if (headerSpan) {
+        headerSpan.innerText = '매칭 그룹 정보 ($n)';
+        headerSpan.style.color = '';
+    }
 
-    if (!regexStr || !text) {
+     if (!regexStr || !text) {
+        if (!renderTarget.querySelector('.notice-box')) {
+            renderTarget.innerHTML = '';
+        }
         return;
     }
 
-    renderTarget.innerHTML = '';
-
     try {
         let pattern, flags;
-
         const slashMatch = regexStr.match(/^\/(.*)\/([a-z]*)$/s);
-
         if (slashMatch) {
             pattern = slashMatch[1];
             flags = slashMatch[2];
@@ -258,22 +271,22 @@ function render() {
             pattern = regexStr;
             flags = '';
         }
-
+        
         if (!flags.includes('g')) {
             flags += 'g';
         }
-
+        
         const re = new RegExp(pattern, flags);
         const matches = [...text.matchAll(re)];
-
+        
         if (matches.length > 0) {
             const firstMatch = matches[0];
-
-            const headerSpan = document.querySelector('.group-header span');
+            
             if (headerSpan) {
                 headerSpan.innerText = `매칭 그룹 정보 (${firstMatch.length - 1}개 발견)`;
+                headerSpan.style.color = '';
             }
-
+            
             groupList.innerHTML = '';
             for (let i = 1; i < firstMatch.length; i++) {
                 const item = document.createElement('div');
@@ -281,13 +294,12 @@ function render() {
                 item.innerHTML = `<span class="group-id">$${i}</span><span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${firstMatch[i] || '-'}</span>`;
                 groupList.appendChild(item);
             }
-
+            
             let finalHtml = "";
             matches.forEach(match => {
                 let temp = template.replace(/\$(\d+)/g, (fullMatch, num) => {
                     const index = parseInt(num);
                     if (index >= match.length) return fullMatch;
-
                     if (viewMode === 'debug') {
                         return `<span style="background:yellow; color:red;">$${index}</span>`;
                     } else {
@@ -296,13 +308,23 @@ function render() {
                 });
                 finalHtml += temp;
             });
+            
             renderTarget.innerHTML = finalHtml;
         } else {
-            renderTarget.innerHTML = "<div style='color:#adb5bd; text-align:center;'>매칭 결과가 없습니다.</div>";
+            if (headerSpan) {
+                headerSpan.innerText = '매칭 그룹 정보 (❌ 매칭 결과가 없습니다)';
+                headerSpan.style.color = '#e74c3c';
+            }
         }
+        
     } catch (e) {
         regexError.style.display = 'block';
         regexError.innerText = e.message;
+        
+        if (headerSpan) {
+            headerSpan.innerText = '매칭 그룹 정보 (⚠️ 정규식 오류)';
+            headerSpan.style.color = '#e74c3c';
+        }
     }
 }
 
@@ -428,7 +450,7 @@ function setPreviewWidth() {
 
     const percentage = (width / containerWidth) * 100;
 
-    if (percentage < 20 || percentage > 80) {
+    if (percentage < 10 || percentage > 90) {
         alert('현재 화면에서 설정 가능한 범위를 벗어났습니다.');
         return;
     }

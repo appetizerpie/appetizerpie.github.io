@@ -1,264 +1,8 @@
 const customPresets = [
-    {
-        name: "에코",
-        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션이 있다면 이런모습]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도가 이런이유로 오름]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
-        regex: `/<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>/gs`,
-        template: `<style>
-.simple-mission[data-mission=""] { display: none !important; }
-.simple-score-change[data-change=""] { display: none !important; }
-.simple-container {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 12px;
-  color: #2c3e50;
-  box-shadow: 0 2px 20px rgba(81, 160, 222, 0.12);
-  max-width: 100%;
-  margin: 10px 0;
-  border: 1px solid #e8f4fc;
-  font-size: 1em;
-}
-
-.simple-header {
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #51a0de;
-  text-align: center;
-}
-
-.simple-title {
-  font-weight: 700;
-  color: #51a0de;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.simple-card {
-  background: #f8fcff;
-  border-radius: 12px;
-  padding: 8px 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid #e1f0fa;
-  margin-bottom: 6px;
-  transition: all 0.2s ease;
-}
-
-.simple-card:hover {
-  border-color: #51a0de;
-  box-shadow: 0 2px 8px rgba(81, 160, 222, 0.15);
-}
-
-.simple-icon {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #e1f0fa;
-  background: #ffffff;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.simple-flex-row { 
-  display: flex;
-  gap: 6px; 
-  margin-bottom: 8px; 
-}
-
-.simple-text-group {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.simple-value {
-  color: #2c3e50;
-  line-height: 1.3;
-}
-
-.simple-mission-card {
-  background: #e8f4fc;
-  border: 1px solid #51a0de;
-  padding: 10px;
-}
-
-.simple-mission-label {
-  color: #51a0de;
-  font-weight: 600;
-}
-
-.simple-mission-text {
-  color: #2c3e50;
-}
-
-.simple-love-card {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 10px;
-  padding: 12px;
-}
-
-.simple-love-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.simple-love-label {
-  color: #FF6B6B;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 0 0 auto;
-  white-space: nowrap;
-}
-
-.simple-love-percent {
-  color: #2c3e50;
-  padding: 0 4px;
-}
-
-.simple-progress-bg {
-  background: #f0f0f0;
-  border-radius: 10px;
-  height: 12px;
-  flex: 1;
-  overflow: hidden;
-}
-
-.simple-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #FF6B6B, #FF8787);
-  border-radius: 10px;
-  transition: width 0.5s ease;
-}
-
-.simple-score-change {
-  display: inline-block;
-  background: #e8f4fc;
-  color: #51a0de;
-  padding: 5px 10px;
-  border-radius: 8px;
-  border: 1px solid #b8dcf7;
-  font-size: 11px;
-}
-
-.simple-divider {
-  height: 1px;
-  background: #e1f0fa;
-  margin: 2px 0;
-}
-
-.simple-thought-row {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-}
-
-.simple-thought-icon {
-  color: #51a0de;
-  margin-top: 2px;
-}
-
-.simple-thought {
-  color: #34495e;
-  line-height: 1.6;
-  flex: 1;
-}
-
-.simple-soundtrack-card {
-  padding: 3px 10px;
-  color: #51a0de;
-  font-size: 0.9em;
-}
-
-.simple-soundtrack-text {
-  color: #34495e;
-}
-
-.simple-card-1 { flex: 1; }
-.simple-card-1-1 { flex: 1.1; }
-.simple-card-1-3 { flex: 1.3; }
-</style>
-
-<div class='simple-container'>
-  <div class='simple-header'>
-    <div class='simple-title'>✨ &lt;{{CHAR}}&gt; STATUS INFO</div>
-  </div>
-
-  <div class='simple-flex-row'>
-    <div class='simple-card simple-card-1'>
-      <div class='simple-icon'>📅</div>
-      <div class='simple-text-group'>
-        <span class='simple-value'>$1</span>
-      </div>
-    </div>
-    <div class='simple-card simple-card-1'>
-      <div class='simple-icon'>🕒</div>
-      <div class='simple-text-group'>
-        <span class='simple-value'>$2</span>
-      </div>
-    </div>
-    <div class='simple-card simple-card-1-1'>
-      <div class='simple-icon'>🌏</div>
-      <div class='simple-text-group'>
-        <span class='simple-value'>$3</span>
-      </div>
-    </div>
-    <div class='simple-card simple-card-1'>
-      <div class='simple-icon'>🧤</div>
-      <div class='simple-text-group'>
-        <span class='simple-value'>$4</span>
-      </div>
-    </div>
-    <div class='simple-card simple-card-1-3'>
-      <div class='simple-icon'>$5</div>
-      <div class='simple-text-group'>
-        <span class='simple-value'>$6</span>
-      </div>
-    </div>
-  </div>
-
-  <div class='simple-mission' data-mission='$7'>
-    <div class='simple-card simple-mission-card'>
-      <span class='simple-mission-label'>🎯 MISSION</span>
-      <span class='simple-mission-text'>$7</span>
-    </div>
-  </div>
-
-  <div class='simple-card simple-love-card'>
-    <div class='simple-love-row'>
-      <div class='simple-love-label'>
-        ♥ <span class='simple-love-percent'>$8%</span>
-      </div>
-      <div class='simple-progress-bg'>
-        <div class='simple-progress-fill' style='width: $8%;'></div>
-      </div>
-    </div>
-
-    <div class='simple-score-change' data-change='$10'>
-      🔔 $10
-    </div>
-
-    <div class='simple-divider'></div>
-
-    <div class='simple-thought-row'>
-      <div class='simple-thought-icon'>💬</div>
-      <div class='simple-thought'>$9</div>
-    </div>
-  </div>
-
-  <div class='simple-soundtrack-card'>
-    🎵 SOUNDTRACK: <span class='simple-soundtrack-text'>$11</span>
-  </div>
-</div>`},
-{
-        name: "📱COD",
-        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션이 있다면 이런모습]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도가 이런이유로 오름]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
-        regex: `/<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>/gs`,
+  {
+        name: "COD",
+        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션 (이 줄을 지워보세요)]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도 변동 (이 줄을 지워보세요)]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
+        regex: `<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>`,
         template: `<style>
 .cod-container {
 --cod-bg: #0e1116;
@@ -421,26 +165,298 @@ style='font-size:0.7em; color:var(--cod-alert); margin-top:2px;'>
 </div>
 </div>`
     },
+    {
+        name: "에코",
+        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션 (이 줄을 지워보세요)]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도 변동 (이 줄을 지워보세요)]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
+        regex: `<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>`,
+        template: `<style>
+.simple-mission[data-mission=""],
+.simple-score-change[data-change=""] {
+display: none !important;
+}
+.simple-container {
+--simple-white: #ffffff;
+--simple-bg-card: #f8fcff;
+--simple-bg-mission: #e8f4fc;
+--simple-bg-progress: #f0f0f0;
+--simple-blue: #51a0de;
+--simple-blue-light: #b8dcf7;
+--simple-border: #e8f4fc;
+--simple-border-light: #e1f0fa;
+--simple-text-dark: #2c3e50;
+--simple-text-medium: #34495e;
+--simple-red: #FF6B6B;
+--simple-red-light: #FF8787;
+--simple-shadow: rgba(81, 160, 222, 0.12);
+background: var(--simple-white);
+border-radius: 12px;
+padding: 10px;
+color: var(--simple-text-dark);
+box-shadow: 0 2px 12px var(--simple-shadow);
+max-width: 100%;
+margin: 8px 0;
+border: 1px solid var(--simple-border);
+font-size: var(--messageTextFontSize);
+}
+.simple-header {
+margin-bottom: 10px;
+padding-bottom: 8px;
+border-bottom: 2px solid var(--simple-blue);
+text-align: center;
+}
+.simple-title {
+font-weight: 700;
+color: var(--simple-blue);
+letter-spacing: 0.5px;
+text-transform: uppercase;
+font-size: 1.2em;
+}
+.simple-flex-row {
+display: flex;
+flex-direction: column;
+gap: 5px;
+margin-bottom: 5px;
+}
+.simple-row-2col {
+display: flex;
+gap: 5px;
+margin-bottom: 5px;
+}
+.simple-row-2col .simple-card {
+flex: 1;
+min-width: 0;
+}
+.simple-card {
+background: var(--simple-bg-card);
+border-radius: 10px;
+padding: 4px 12px;
+display: flex;
+align-items: center;
+gap:10px;
+border: 1px solid var(--simple-border-light);
+transition: background 0.2s ease;
+}
+.simple-mission-card {
+background: var(--simple-bg-mission);
+border: 1px solid var(--simple-blue);
+padding: 12px;
+flex-direction: column;
+align-items: flex-start;
+gap: 3px;
+}
+.simple-love-card {
+flex-direction: column;
+align-items: stretch;
+gap: 8px;
+padding: 12px;
+}
+.simple-soundtrack-card {
+padding: 3px;
+color: var(--simple-blue);
+font-size: 0.9em;
+}
+.simple-icon {
+width: 35px;
+height: 35px;
+border: 1px solid var(--simple-border-light);
+background: var(--simple-white);
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+font-size: 1.2em;
+}
+.simple-text-group {
+display: flex;
+flex-direction: column;
+flex: 1;
+min-width: 0;
+}
+.simple-value,
+.simple-mission-text,
+.simple-thought,
+.simple-soundtrack-text {
+line-height: 1.5;
+word-wrap: break-word;
+overflow-wrap: break-word;
+}
+.simple-value,
+.simple-mission-text {
+color: var(--simple-text-dark);
+}
+.simple-thought,
+.simple-soundtrack-text {
+color: var(--simple-text-medium);
+}
+.simple-thought {
+flex: 1;
+}
+.simple-mission {
+margin-bottom: 10px;
+}
+.simple-mission-label {
+color: var(--simple-blue);
+font-weight: 600;
+font-size: var(--messageTextFontSize);
+}
+.simple-love-row {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.simple-love-label {
+color: var(--simple-red);
+font-weight: 800;
+display: flex;
+align-items: center;
+gap: 6px;
+flex-shrink: 0;
+white-space: nowrap;
+font-size: 1.1em;
+}
+.simple-love-percent {
+color: var(--simple-text-dark);
+padding: 0 4px;
+}
+.simple-progress-bg {
+background: var(--simple-bg-progress);
+border-radius: 10px;
+height: 16px;
+flex: 1;
+overflow: hidden;
+min-width: 100px;
+}
+.simple-progress-fill {
+height: 100%;
+background: linear-gradient(90deg, var(--simple-red), var(--simple-red-light));
+border-radius: 10px;
+transition: width 0.5s ease;
+}
+.simple-score-change {
+display: block;
+background: var(--simple-bg-mission);
+color: var(--simple-blue);
+padding: 8px 12px;
+border-radius: 8px;
+border: 1px solid var(--simple-blue-light);
+font-size: 0.9em;
+font-weight: 500;
+}
+.simple-divider {
+height: 1px;
+background: var(--simple-border-light);
+}
+.simple-thought-row {
+display: flex;
+gap: 10px;
+align-items: flex-start;
+}
+.simple-thought-icon {
+color: var(--simple-blue);
+font-size: 1.2em;
+}
+</style>
+<div class='simple-container'>
+<div class='simple-header'>
+<div class='simple-title'>✨ &lt;{{CHAR}}&gt; STATUS INFO</div>
+</div>
+<div class='simple-row-2col'>
+<div class='simple-card'>
+<div class='simple-icon'>📅</div>
+<div class='simple-text-group'>
+<span class='simple-value'>$1</span>
+</div>
+</div>
+<div class='simple-card'>
+<div class='simple-icon'>🕒</div>
+<div class='simple-text-group'>
+<span class='simple-value'>$2</span>
+</div>
+</div>
+</div>
+<div class='simple-flex-row'>
+<div class='simple-card'>
+<div class='simple-icon'>🌏</div>
+<div class='simple-text-group'>
+<span class='simple-value'>$3</span>
+</div>
+</div>
+<div class='simple-card'>
+<div class='simple-icon'>🧤</div>
+<div class='simple-text-group'>
+<span class='simple-value'>$4</span>
+</div>
+</div>
+<div class='simple-card'>
+<div class='simple-icon'>$5</div>
+<div class='simple-text-group'>
+<span class='simple-value'>$6</span>
+</div>
+</div>
+</div>
+<div class='simple-mission' data-mission='$7'>
+<div class='simple-card simple-mission-card'>
+<span class='simple-mission-label'>🎯 MISSION</span>
+<span class='simple-mission-text'>$7</span>
+</div>
+</div>
+<div class='simple-card simple-love-card'>
+<div class='simple-love-row'>
+<div class='simple-love-label'>
+♥ <span class='simple-love-percent'>$8%</span>
+</div>
+<div class='simple-progress-bg'>
+<div class='simple-progress-fill' style='width:$8%;'></div>
+</div>
+</div>
+<div class='simple-score-change' data-change='$10'>🔔 $10</div>
+<div class='simple-divider'></div>
+<div class='simple-thought-row'>
+<div class='simple-thought-icon'>💬</div>
+<div class='simple-thought'>$9</div>
+</div>
+</div>
+<div class='simple-soundtrack-card'>
+🎵 SOUNDTRACK: <span class='simple-soundtrack-text'>$11</span>
+</div>
+</div>`},
 {
         name: "JARVIS",
-        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션이 있다면 이런모습]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도가 이런이유로 오름]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
-        regex: `/<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>/gs`,
+        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션 (이 줄을 지워보세요)]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도 변동 (이 줄을 지워보세요)]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
+        regex: `<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>`,
         template: `<style>
-.score-change-hud[data-change=""] { display: none !important; }
-.hud-value-mobile[data-change=""] { display: none !important; }
-.panel-decor[data-mission=""] { display: none !important; }
-.stream-line[data-mission=""] { display: none !important; }
-.active-line[data-mission=""] { display: none !important; }
+.score-change-hud[data-change=""],
+.hud-value-mobile[data-change=""],
+.panel-decor[data-mission=""],
+.stream-line[data-mission=""],
+.active-line[data-mission=""] {
+display: none;
+}
 .jarvis-wrapper {
+--jarvis-bg-dark: #020b14;
+--jarvis-bg-panel: rgba(0, 20, 40, 0.6);
+--jarvis-cyan: #00f3ff;
+--jarvis-cyan-dim: rgba(0, 243, 255, 0.3);
+--jarvis-cyan-faint: rgba(0, 243, 255, 0.2);
+--jarvis-cyan-ultra: rgba(0, 243, 255, 0.03);
+--jarvis-cyan-light: rgba(0, 243, 255, 0.05);
+--jarvis-cyan-medium: rgba(0, 243, 255, 0.1);
+--jarvis-cyan-border: rgba(0, 243, 255, 0.15);
+--jarvis-cyan-strong: rgba(0, 243, 255, 0.4);
+--jarvis-cyan-bright: rgba(0, 243, 255, 0.6);
+--jarvis-white: #fff;
+--jarvis-black: rgba(0,0,0,0.5);
+--jarvis-shadow: rgba(0,0,0,0.8);
 position: relative;
-background-color: #020b14;
-color: #00f3ff;
+background-color: var(--jarvis-bg-dark);
+color: var(--jarvis-cyan);
 overflow: hidden;
 padding: 20px;
-border: 1px solid rgba(0, 243, 255, 0.3);
-box-shadow: 0 0 50px rgba(0,0,0,0.8) inset;
+border: 1px solid var(--jarvis-cyan-dim);
+box-shadow: 0 0 50px var(--jarvis-shadow) inset;
 min-height: 400px;
-font-size: var(--messageTextFontSize) !important;
+font-size: var(--messageTextFontSize);
 }
 .bg-hud-layer {
 position: absolute;
@@ -459,61 +475,70 @@ align-items: center;
 .hud-circle {
 position: absolute;
 border-radius: 50%;
-border: 1px solid #00f3ff;
-box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+border: 1px solid var(--jarvis-cyan);
+box-shadow: 0 0 15px var(--jarvis-cyan-dim);
 }
 .hud-c1 {
-width: 400px; height: 400px;
+width: 400px;
+height: 400px;
 border-width: 2px;
 border-left-color: transparent;
 border-right-color: transparent;
 animation: spin 20s linear infinite;
 }
 .hud-c2 {
-width: 300px; height: 300px;
+width: 300px;
+height: 300px;
 border-width: 1px;
 border-style: dashed;
 animation: spin 30s linear infinite reverse;
 }
 .hud-c3 {
-width: 500px; height: 500px;
+width: 500px;
+height: 500px;
 border: 5px solid transparent;
-border-top: 5px solid rgba(0, 243, 255, 0.3);
-border-bottom: 5px solid rgba(0, 243, 255, 0.3);
+border-top: 5px solid var(--jarvis-cyan-dim);
+border-bottom: 5px solid var(--jarvis-cyan-dim);
 animation: spin 15s ease-in-out infinite;
 }
 .hud-crosshair {
 position: absolute;
-width: 100%; height: 1px;
-background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.3), transparent);
+width: 100%;
+height: 1px;
+background: linear-gradient(90deg, transparent, var(--jarvis-cyan-dim), transparent);
 }
 .hud-crosshair-v {
 position: absolute;
-width: 1px; height: 100%;
-background: linear-gradient(180deg, transparent, rgba(0, 243, 255, 0.2), transparent);
+width: 1px;
+height: 100%;
+background: linear-gradient(180deg, transparent, var(--jarvis-cyan-faint), transparent);
 left: 50%;
 }
 .bg-scanlines {
 position: absolute;
-top: 0; left: 0;
-width: 100%; height: 100%;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
 background: repeating-linear-gradient(
 0deg,
 transparent,
 transparent 2px,
-rgba(0, 243, 255, 0.03) 2px,
-rgba(0, 243, 255, 0.03) 4px
+var(--jarvis-cyan-ultra) 2px,
+var(--jarvis-cyan-ultra) 4px
 );
 pointer-events: none;
 z-index: 1;
 }
 .bg-grid {
 position: absolute;
-top: 0; left: 0;
-width: 100%; height: 100%;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
 background-image:
-linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
-linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+linear-gradient(var(--jarvis-cyan-light) 1px, transparent 1px),
+linear-gradient(90deg, var(--jarvis-cyan-light) 1px, transparent 1px);
 background-size: 50px 50px;
 pointer-events: none;
 z-index: 0;
@@ -522,7 +547,7 @@ z-index: 0;
 position: absolute;
 width: 80px;
 height: 80px;
-border: 2px solid rgba(0, 243, 255, 0.2);
+border: 2px solid var(--jarvis-cyan-faint);
 pointer-events: none;
 z-index: 1;
 }
@@ -554,7 +579,7 @@ border-top: none;
 position: absolute;
 width: 200px;
 height: 2px;
-background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.4), transparent);
+background: linear-gradient(90deg, transparent, var(--jarvis-cyan-strong), transparent);
 top: 30%;
 left: 5%;
 transform-origin: left center;
@@ -581,7 +606,7 @@ z-index: 1;
 width: 20px;
 height: 24px;
 background: transparent;
-border: 1px solid #00f3ff;
+border: 1px solid var(--jarvis-cyan);
 clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 animation: hex-pulse 3s ease-in-out infinite;
 }
@@ -597,7 +622,7 @@ animation: hex-pulse 3s ease-in-out infinite;
 .bg-text-stream {
 position: absolute;
 font-size: 0.7em;
-color: rgba(0, 243, 255, 0.2);
+color: var(--jarvis-cyan-faint);
 font-family: 'Courier New', monospace;
 white-space: nowrap;
 z-index: 1;
@@ -628,7 +653,7 @@ animation: stream-scroll-2 12s linear infinite reverse;
 position: absolute;
 width: 60px;
 height: 60px;
-border: 1px solid rgba(0, 243, 255, 0.2);
+border: 1px solid var(--jarvis-cyan-faint);
 z-index: 1;
 animation: target-scan 4s ease-in-out infinite;
 }
@@ -636,7 +661,7 @@ animation: target-scan 4s ease-in-out infinite;
 .bg-target-box::after {
 content: '';
 position: absolute;
-background: rgba(0, 243, 255, 0.3);
+background: var(--jarvis-cyan-dim);
 }
 .bg-target-box::before {
 width: 20px;
@@ -671,8 +696,8 @@ transform: translate(-50%, -50%);
 font-size: 4em;
 font-weight: 700;
 letter-spacing: 15px;
-color: #00f3ff;
-text-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
+color: var(--jarvis-cyan);
+text-shadow: 0 0 30px var(--jarvis-cyan-bright);
 opacity: 0.15;
 z-index: 1;
 animation: pulse-glow 3s ease-in-out infinite;
@@ -709,7 +734,7 @@ gap: 8px;
 .bg-bar-title {
 font-size: 0.6em;
 letter-spacing: 2px;
-color: #00f3ff;
+color: var(--jarvis-cyan);
 writing-mode: vertical-lr;
 transform: rotate(180deg);
 }
@@ -721,9 +746,9 @@ align-items: flex-end;
 }
 .bg-bar-graph span {
 width: 3px;
-background: #00f3ff;
+background: var(--jarvis-cyan);
 opacity: 0.5;
-box-shadow: 0 0 5px #00f3ff;
+box-shadow: 0 0 5px var(--jarvis-cyan);
 animation: bar-fluctuate 2s infinite;
 }
 .bg-circular-mini {
@@ -735,34 +760,34 @@ position: relative;
 width: 100%;
 height: 100%;
 fill: none;
-stroke: #00f3ff;
+stroke: var(--jarvis-cyan);
 stroke-width: 2;
 animation: spin 5s linear infinite;
 }
 .bg-mini-label {
 font-size: 0.5em;
-color: #00f3ff;
+color: var(--jarvis-cyan);
 text-align: center;
 margin-top: 5px;
 letter-spacing: 1px;
 }
 .bg-status-label {
 font-size: 0.6em;
-color: #00f3ff;
+color: var(--jarvis-cyan);
 margin-bottom: 5px;
 letter-spacing: 1px;
 }
 .bg-progress-bar {
 height: 4px;
 width: 60px;
-background: rgba(0,0,0,0.5);
-border: 1px solid rgba(0, 243, 255, 0.3);
+background: var(--jarvis-black);
+border: 1px solid var(--jarvis-cyan-dim);
 margin-bottom: 15px;
 }
 .bg-progress-fill {
 height: 100%;
-background: #00f3ff;
-box-shadow: 0 0 8px #00f3ff;
+background: var(--jarvis-cyan);
+box-shadow: 0 0 8px var(--jarvis-cyan);
 }
 .bg-hex-grid {
 display: flex;
@@ -772,17 +797,17 @@ margin-bottom: 15px;
 .bg-hex {
 width: 8px;
 height: 10px;
-background: rgba(0, 243, 255, 0.3);
+background: var(--jarvis-cyan-dim);
 clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 @keyframes pulse-glow {
 0%, 100% {
 opacity: 0.1;
-text-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
+text-shadow: 0 0 20px var(--jarvis-cyan-bright);
 }
 50% {
 opacity: 0.2;
-text-shadow: 0 0 40px rgba(0, 243, 255, 0.6);
+text-shadow: 0 0 40px var(--jarvis-cyan-bright);
 }
 }
 @keyframes spin {
@@ -809,17 +834,17 @@ gap: 15px;
 width: 100%;
 }
 .glass-panel {
-background: rgba(0, 20, 40, 0.6);
-border: 1px solid rgba(0, 243, 255, 0.3);
+background: var(--jarvis-bg-panel);
+border: 1px solid var(--jarvis-cyan-dim);
 padding: 15px;
 position: relative;
 backdrop-filter: blur(2px);
-box-shadow: 0 0 6px #00f3ff;
+box-shadow: 0 0 6px var(--jarvis-cyan);
 }
 .panel-header {
 display: flex;
 justify-content: space-between;
-border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+border-bottom: 1px solid var(--jarvis-cyan-dim);
 padding-bottom: 5px;
 margin-bottom: 10px;
 font-weight: bold;
@@ -873,24 +898,16 @@ align-items: center;
 .info-outfit-group {
 display: contents;
 }
-.info-date-group,
-.info-location-group, {
-justify-content: flex-start;
-}
-.info-time-group,
-.info-outfit-group {
-justify-content: flex-end;
-}
 .info-label {
-color: rgba(0, 243, 255, 0.3);
+color: var(--jarvis-cyan-dim);
 text-transform: uppercase;
 letter-spacing: 1px;
 font-weight: 600;
 }
 .info-value {
-color: #fff;
+color: var(--jarvis-white);
 text-align: right;
-text-shadow: 0 0 5px rgba(0, 243, 255, 0.6);
+text-shadow: 0 0 5px var(--jarvis-cyan-bright);
 flex: 1;
 }
 .log-stream {
@@ -901,13 +918,15 @@ opacity: 0.7;
 }
 .active-line {
 opacity: 1;
-color: #fff;
-text-shadow: 0 0 5px #00f3ff;
+color: var(--jarvis-white);
+text-shadow: 0 0 5px var(--jarvis-cyan);
 }
 .cursor {
 animation: blink 1s step-end infinite;
 }
-@keyframes blink { 50% { opacity: 0; } }
+@keyframes blink {
+50% { opacity: 0; }
+}
 .affection-content-horizontal {
 display: flex;
 gap: 20px;
@@ -926,65 +945,65 @@ flex-shrink: 0;
 position: relative;
 display: inline-block;
 will-change: transform;
-filter: drop-shadow(0 0 8px #00f3ff);
+filter: drop-shadow(0 0 8px var(--jarvis-cyan));
 }
 .percentage-counter {
 position: absolute;
 transform: translate(-50%, -50%);
 top: 50%;
 left: 50%;
-color: #00f3ff;
+color: var(--jarvis-cyan);
 font-size: 1.2em;
 font-weight: bold;
 text-align: center;
-text-shadow: 0 0 10px #00f3ff;
+text-shadow: 0 0 10px var(--jarvis-cyan);
 z-index: 10;
 }
 .outer_circle {
 fill: transparent;
-stroke: #00f3ff;
+stroke: var(--jarvis-cyan);
 stroke-width: 2;
 stroke-dasharray: 7 1;
 stroke-dashoffset: 0;
 }
 .outer_circle_bars_l {
 fill: transparent;
-stroke: #00f3ff;
+stroke: var(--jarvis-cyan);
 stroke-width: 7;
 stroke-dasharray: 0.4 7.6;
 stroke-dashoffset: 0.1;
 }
 .outer_circle_bars_r {
 fill: transparent;
-stroke: #00f3ff;
+stroke: var(--jarvis-cyan);
 stroke-width: 7;
 stroke-dasharray: 0.4 7.6;
 stroke-dashoffset: 1.4;
 }
 .inner_progress_circle {
 fill: transparent;
-stroke: #00f3ff;
+stroke: var(--jarvis-cyan);
 stroke-width: 7;
 stroke-dasharray: 100 100;
 transition: stroke-dashoffset 0.5s ease;
 }
 .inner_half_circle {
 fill: transparent;
-stroke: #00f3ff;
+stroke: var(--jarvis-cyan);
 stroke-width: 7;
 stroke-dasharray: 24.5 0.5;
 stroke-dashoffset: 0;
 }
 .center_outer_circle {
 fill: transparent;
-stroke: rgba(0, 243, 255, 0.3);
+stroke: var(--jarvis-cyan-dim);
 stroke-width: 1;
 stroke-dasharray: 0;
 stroke-dashoffset: 0;
 }
 .center_inner_circle_second {
 fill: transparent;
-stroke: #00f3ff;
+stroke: var(--jarvis-cyan);
 stroke-width: 2;
 stroke-dasharray: 5 95;
 stroke-dashoffset: 0;
@@ -993,49 +1012,49 @@ animation-timing-function: steps(4, end);
 }
 .center_inner_circle_3 {
 fill: transparent;
-stroke: rgba(0, 243, 255, 0.3);
+stroke: var(--jarvis-cyan-dim);
 stroke-width: 2;
 stroke-dasharray: 33 66;
 stroke-dashoffset: -10;
 }
 .center_inner_circle_3_dashed_verticle {
 fill: transparent;
-stroke: rgba(0, 243, 255, 0.6);
+stroke: var(--jarvis-cyan-bright);
 stroke-width: 7;
 stroke-dasharray: 0.2 7.8;
 stroke-dashoffset: 0;
 }
 .center_inner_circle_3_dashed {
 fill: transparent;
-stroke: rgba(0, 243, 255, 0.3);
+stroke: var(--jarvis-cyan-dim);
 stroke-width: 1;
 stroke-dasharray: 1 3.5;
 stroke-dashoffset: 0;
 }
 .center_inner_circle_2 {
 fill: transparent;
-stroke: rgba(0, 243, 255, 0.3);
+stroke: var(--jarvis-cyan-dim);
 stroke-width: 1;
 stroke-dasharray: 75 25;
 stroke-dashoffset: 60;
 }
 .center_inner_circle_1 {
 fill: transparent;
-stroke: rgba(0, 243, 255, 0.3);
+stroke: var(--jarvis-cyan-dim);
 stroke-width: 1;
 stroke-dasharray: 95 5;
 stroke-dashoffset: 20;
 }
 .center_inner_circle_0 {
 fill: transparent;
-stroke: rgba(0, 243, 255, 0.3);
+stroke: var(--jarvis-cyan-dim);
 stroke-width: 7;
 stroke-dasharray: 0.3 0.7;
 stroke-dashoffset: 0;
 animation: centerInnerCircle0 40s linear infinite;
 }
 .small_rectangles {
-fill: rgba(0, 243, 255, 0.6);
+fill: var(--jarvis-cyan-bright);
 }
 @keyframes centerInnerCircleSecond {
 0% { transform: rotate(0deg); }
@@ -1058,27 +1077,27 @@ gap: 5px;
 height: 40px;
 }
 .root-line-svg path {
-filter: drop-shadow(0 0 3px #00f3ff);
+filter: drop-shadow(0 0 3px var(--jarvis-cyan));
 }
 .root-line-svg circle {
-filter: drop-shadow(0 0 5px #00f3ff);
+filter: drop-shadow(0 0 5px var(--jarvis-cyan));
 }
 .hud-value {
-color: #00f3ff;
+color: var(--jarvis-cyan);
 font-size: 0.8em;
 font-weight: bold;
-text-shadow: 0 0 8px #00f3ff;
+text-shadow: 0 0 8px var(--jarvis-cyan);
 white-space: nowrap;
 }
 .hud-value-mobile {
 display: none;
 padding: 8px 12px;
-background: rgba(0, 243, 255, 0.1);
-border-left: 3px solid #00f3ff;
+background: var(--jarvis-cyan-medium);
+border-left: 3px solid var(--jarvis-cyan);
 border-radius: 2px;
-color: #00f3ff;
+color: var(--jarvis-cyan);
 font-weight: bold;
-text-shadow: 0 0 8px #00f3ff;
+text-shadow: 0 0 8px var(--jarvis-cyan);
 }
 .analysis-section {
 flex: 1;
@@ -1088,8 +1107,8 @@ gap: 10px;
 }
 .thought-box-compact {
 padding: 10px;
-background: rgba(0, 243, 255, 0.05);
-border-left: 2px solid #00f3ff;
+background: var(--jarvis-cyan-light);
+border-left: 2px solid var(--jarvis-cyan);
 flex: 1;
 }
 .thought-label {
@@ -1099,12 +1118,13 @@ font-weight: bold;
 }
 .thought-text {
 line-height: 1.6;
-color: #fff;
+color: var(--jarvis-white);
 }
 .corner-bracket {
 position: absolute;
-width: 10px; height: 10px;
-border: 2px solid #00f3ff;
+width: 10px;
+height: 10px;
+border: 2px solid var(--jarvis-cyan);
 }
 .br-tl { top: -1px; left: -1px; border-bottom: none; border-right: none; }
 .br-tr { top: -1px; right: -1px; border-bottom: none; border-left: none; }
@@ -1118,34 +1138,39 @@ opacity: 0.7;
 .jarvis-wrapper { padding: 15px; }
 .bg-side-deco { display: none; }
 .info-panel-text { padding: 10px; }
-.affection-content-horizontal { flex-direction: column; align-items: stretch; gap: 0; }
-.circular-hud-container { display: flex; justify-content: center; }
+.affection-content-horizontal {
+flex-direction: column;
+align-items: stretch;
+gap: 0;
+}
+.circular-hud-container {
+display: flex;
+justify-content: center;
+}
 .affection-column-layout { width: 100%; }
 .hud-menu-row { display: none; }
 .hud-value-mobile { display: block; }
-.bg-jarvis-text {
-font-size: 2.5em;
-}
+.bg-jarvis-text { font-size: 2.5em; }
 .info-text-grid {
-display: flex !important;
-flex-direction: column !important;
-gap: 6px !important;
+display: flex;
+flex-direction: column;
+gap: 6px;
 }
 .info-text-row {
 border-bottom: none;
 padding: 0;
 }
 .info-text-row.info-row-date-time:first-child {
-display: flex !important;
-flex-direction: column !important;
-gap: 4px !important;
+display: flex;
+flex-direction: column;
+gap: 4px;
 }
 .info-text-row.info-row-date-time:first-child .info-date-group,
 .info-text-row.info-row-date-time:first-child .info-time-group {
-display: flex !important;
-justify-content: space-between !important;
-width: 100% !important;
-border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+display: flex;
+justify-content: space-between;
+width: 100%;
+border-bottom: 1px solid var(--jarvis-cyan-border);
 padding: 4px 0;
 }
 .info-text-row.info-row-date-time:nth-child(2) {
@@ -1157,8 +1182,8 @@ gap: 4px;
 .info-text-row.info-row-date-time:nth-child(2) .info-outfit-group {
 display: inline-flex;
 justify-content: space-between;
-width: 100% !important;
-border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+width: 100%;
+border-bottom: 1px solid var(--jarvis-cyan-border);
 padding: 4px 0;
 }
 .info-label {
@@ -1202,17 +1227,17 @@ text-align: right;
 <div class='bg-data-block'>
 <div class='bg-bar-title'>MAG</div>
 <div class='bg-bar-graph'>
-<span style='height: 60%'></span>
-<span style='height: 80%'></span>
-<span style='height: 40%'></span>
-<span style='height: 90%'></span>
-<span style='height: 20%'></span>
+<span style='height:60%'></span>
+<span style='height:80%'></span>
+<span style='height:40%'></span>
+<span style='height:90%'></span>
+<span style='height:20%'></span>
 </div>
 </div>
 <div class='bg-data-block'>
 <div class='bg-circular-mini'>
 <svg viewBox='0 0 100 100'>
-<circle cx='50' cy='50' r='45' stroke-dasharray='200' stroke-dashoffset='40' />
+<circle cx='50' cy='50' r='45' stroke-dasharray='200' stroke-dashoffset='40'/>
 </svg>
 </div>
 <div class='bg-mini-label'>DATA</div>
@@ -1222,7 +1247,7 @@ text-align: right;
 <div class='bg-data-block'>
 <div class='bg-status-label'>POWER</div>
 <div class='bg-progress-bar'>
-<div class='bg-progress-fill' style='width: 88%'></div>
+<div class='bg-progress-fill' style='width:88%'></div>
 </div>
 </div>
 <div class='bg-data-block'>
@@ -1286,27 +1311,27 @@ ACTIVE LOG
 <div class='wobbling-element'>
 <div class='percentage-counter'>$8%</div>
 <svg width='120' height='120' viewBox='-100 -100 200 200'>
-<circle class='outer_circle' cx='0' cy='0' r='99' pathLength='100' />
-<circle class='outer_circle_bars_l' cx='0' cy='0' r='96' pathLength='64' />
-<circle class='outer_circle_bars_r' cx='0' cy='0' r='96' pathLength='64' />
-<circle class='inner_progress_circle' cx='0' cy='0' r='96' pathLength='100' transform='rotate(-90 0 0)' style='stroke-dashoffset: calc(100 - $8);' />
-<circle class='inner_half_circle' cx='0' cy='0' r='80' pathLength='50' />
-<circle class='center_outer_circle' cx='0' cy='0' r='73' pathLength='50' />
-<circle class='center_inner_circle_second' cx='0' cy='0' r='67' pathLength='100' />
-<circle class='center_inner_circle_3' cx='0' cy='0' r='65' pathLength='100' />
-<circle class='center_inner_circle_3_dashed_verticle' cx='0' cy='0' r='61' pathLength='64' />
-<circle class='center_inner_circle_3_dashed' cx='0' cy='0' r='61' pathLength='100' />
-<circle class='center_inner_circle_2' cx='0' cy='0' r='58' pathLength='100' />
-<circle class='center_inner_circle_1' cx='0' cy='0' r='55' pathLength='100' />
-<circle class='center_inner_circle_0' cx='0' cy='0' r='35' pathLength='40' />
-<rect class='small_rectangles' x='-1.5' y='-68' width='4' height='4' rx='1' />
-<rect class='small_rectangles' x='-2.5' y='64' width='4' height='4' rx='1' />
-<rect class='small_rectangles' x='-68' y='-2.5' width='4' height='4' rx='1' />
-<rect class='small_rectangles' x='64' y='-1.5' width='4' height='4' rx='1' />
-<rect class='small_rectangles' x='-48' y='-49' width='4' height='4' rx='1' />
-<rect class='small_rectangles' x='45' y='-48' width='4' height='4' rx='1' />
-<rect class='small_rectangles' x='45' y='46' width='4' height='4' rx='1' />
-<rect class='small_rectangles' x='-49' y='44' width='4' height='4' rx='1' />
+<circle class='outer_circle' cx='0' cy='0' r='99' pathLength='100'/>
+<circle class='outer_circle_bars_l' cx='0' cy='0' r='96' pathLength='64'/>
+<circle class='outer_circle_bars_r' cx='0' cy='0' r='96' pathLength='64'/>
+<circle class='inner_progress_circle' cx='0' cy='0' r='96' pathLength='100' transform='rotate(-90 0 0)' style='stroke-dashoffset:calc(100 - $8);'/>
+<circle class='inner_half_circle' cx='0' cy='0' r='80' pathLength='50'/>
+<circle class='center_outer_circle' cx='0' cy='0' r='73' pathLength='50'/>
+<circle class='center_inner_circle_second' cx='0' cy='0' r='67' pathLength='100'/>
+<circle class='center_inner_circle_3' cx='0' cy='0' r='65' pathLength='100'/>
+<circle class='center_inner_circle_3_dashed_verticle' cx='0' cy='0' r='61' pathLength='64'/>
+<circle class='center_inner_circle_3_dashed' cx='0' cy='0' r='61' pathLength='100'/>
+<circle class='center_inner_circle_2' cx='0' cy='0' r='58' pathLength='100'/>
+<circle class='center_inner_circle_1' cx='0' cy='0' r='55' pathLength='100'/>
+<circle class='center_inner_circle_0' cx='0' cy='0' r='35' pathLength='40'/>
+<rect class='small_rectangles' x='-1.5' y='-68' width='4' height='4' rx='1'/>
+<rect class='small_rectangles' x='-2.5' y='64' width='4' height='4' rx='1'/>
+<rect class='small_rectangles' x='-68' y='-2.5' width='4' height='4' rx='1'/>
+<rect class='small_rectangles' x='64' y='-1.5' width='4' height='4' rx='1'/>
+<rect class='small_rectangles' x='-48' y='-49' width='4' height='4' rx='1'/>
+<rect class='small_rectangles' x='45' y='-48' width='4' height='4' rx='1'/>
+<rect class='small_rectangles' x='45' y='46' width='4' height='4' rx='1'/>
+<rect class='small_rectangles' x='-49' y='44' width='4' height='4' rx='1'/>
 </svg>
 </div>
 </div>
@@ -1315,15 +1340,13 @@ ACTIVE LOG
 <div class='score-change-hud' data-change='$10'>
 <div class='hud-menu-row'>
 <svg class='root-line-svg' width='85' height='30' viewBox='0 0 85 30'>
-<path d='M 0 30 L 15 30 L 25 15 L 80 15' fill='none' stroke='#00f3ff' stroke-width='2' />
-<circle cx='80' cy='15' r='3' fill='#00f3ff' />
+<path d='M 0 30 L 15 30 L 25 15 L 80 15' fill='none' stroke='#00f3ff' stroke-width='2'/>
+<circle cx='80' cy='15' r='3' fill='#00f3ff'/>
 </svg>
 <div class='hud-value'>$10</div>
 </div>
 </div>
-<div class='hud-value-mobile' data-change='$10'>
-▲ $10
-</div>
+<div class='hud-value-mobile' data-change='$10'>▲ $10</div>
 <div class='thought-box-compact'>
 <div class='thought-label'>💬 INTERNAL ANALYSIS</div>
 <div class='thought-text'>$9</div>
@@ -1339,26 +1362,43 @@ ACTIVE LOG
 </div>
 </div>
 </div>
-</div>
-
-`},
+</div>`},
 {
         name: "DP",
-        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션이 있다면 이런모습]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도가 이런이유로 오름]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
-        regex: `/<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>/gs`,
+        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션 (이 줄을 지워보세요)]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도 변동 (이 줄을 지워보세요)]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
+        regex: `<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>`,
         template: `<style>
-.dp-mission[data-mission=""] { display: none !important; }
-.dp-score-change[data-change=""]  { display: none !important; }
+.dp-mission[data-mission=""],
+.dp-score-change[data-change=""] {
+display: none !important;
+}
 .dp-container {
-background: #1a1a1a;
-background-image: radial-gradient(#330000 15%, transparent 16%), radial-gradient(#330000 15%, transparent 16%);
+--dp-dark: #1a1a1a;
+--dp-darker: #0d0d0d;
+--dp-darkest: #000;
+--dp-gray: #2a2a2a;
+--dp-gray-light: #888;
+--dp-border: #222;
+--dp-border-light: #444;
+--dp-border-lighter: #555;
+--dp-text: #eee;
+--dp-red: #c41e3a;
+--dp-red-dark: #8B0000;
+--dp-blood: #330000;
+--dp-pink: #ff69b4;
+--dp-yellow: #fff4a8;
+--dp-white: #fff;
+background: var(--dp-dark);
+background-image:
+radial-gradient(var(--dp-blood) 15%, transparent 16%),
+radial-gradient(var(--dp-blood) 15%, transparent 16%);
 background-size: 20px 20px;
 background-position: 0 0, 10px 10px;
-border: 3px solid #222;
+border: 3px solid var(--dp-border);
 border-radius: 4px;
 padding: 15px;
-color: #eee;
-box-shadow: 5px 5px 0px #8B0000;
+color: var(--dp-text);
+box-shadow: 5px 5px 0 var(--dp-red-dark);
 max-width: 100%;
 margin: 15px 0;
 position: relative;
@@ -1371,66 +1411,68 @@ width: 45px;
 height: 45px;
 z-index: 10;
 pointer-events: none;
-filter: drop-shadow(3px 3px 0px rgba(0,0,0,0.5));
+filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.5));
 }
 .dp-header {
-background: #c41e3a;
-color: #fff;
+background: var(--dp-red);
+color: var(--dp-white);
 padding: 8px;
 text-align: center;
 font-weight: 900;
 font-size: 1.4em;
 text-transform: uppercase;
-box-shadow: 3px 3px 0 #000;
+box-shadow: 3px 3px 0 var(--dp-darkest);
 margin-bottom: 15px;
-border: 2px solid #000;
+border: 2px solid var(--dp-darkest);
 letter-spacing: 1px;
 }
 .dp-mask-icon {
 display: inline-block;
-background: #000;
-color: #fff;
+background: var(--dp-darkest);
+color: var(--dp-white);
 padding: 2px 6px;
 border-radius: 50%;
 vertical-align: middle;
 }
 .dp-grid {
 display: grid;
-grid-template-columns: 1fr 1fr;
+grid-template-columns: repeat(2, 1fr);
 gap: 8px;
 margin-bottom: 10px;
 }
 .dp-info-box {
-background: #2a2a2a;
-border-left: 4px solid #c41e3a;
+background: var(--dp-gray);
+border-left: 4px solid var(--dp-red);
 padding: 6px 10px;
 display: flex;
 align-items: center;
 gap: 8px;
 }
+.dp-info-box.full-width {
+grid-column: 1 / -1;
+}
 .dp-mission {
-background: #c41e3a;
-color: #fff;
+background: var(--dp-red);
+color: var(--dp-white);
 padding: 10px;
 margin: 10px 0;
 font-weight: bold;
-border: 2px solid #000;
+border: 2px solid var(--dp-darkest);
 box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
 position: relative;
 }
 .dp-mission::before {
 content: '🔪 TARGET';
 display: inline-block;
-background: #000;
-color: #fff;
-width: fit-content;
+background: var(--dp-darkest);
+color: var(--dp-white);
 padding: 2px 12px 2px 6px;
 margin-right: 6px;
 }
 .dp-love-container {
-background: #0d0d0d;
+background: var(--dp-darker);
 padding: 15px 12px;
-border: 1px solid #444;
+border: 1px solid var(--dp-border-light);
 border-radius: 6px;
 margin-bottom: 10px;
 position: relative;
@@ -1443,7 +1485,7 @@ align-items: center;
 flex-wrap: wrap;
 }
 .dp-unicorn-label {
-color: #ff69b4;
+color: var(--dp-pink);
 font-weight: bold;
 font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
 font-style: italic;
@@ -1453,7 +1495,7 @@ letter-spacing: -0.5px;
 text-align: right;
 margin-top: 5px;
 font-size: 0.85em;
-color: #ff69b4;
+color: var(--dp-pink);
 }
 .dp-slider-wrapper {
 position: relative;
@@ -1468,94 +1510,99 @@ left: 0;
 right: 0;
 height: 4px;
 background: #333;
+border: 1px solid var(--dp-border-lighter);
 border-radius: 2px;
 transform: translateY(-50%);
-border: 1px solid #555;
 }
 .dp-slider-fill {
 position: absolute;
 top: 50%;
 height: 4px;
-background: repeating-linear-gradient(45deg, #c41e3a, #c41e3a 10px, #ff69b4 10px, #ff69b4 20px);
+background: repeating-linear-gradient(
+45deg,
+var(--dp-red),
+var(--dp-red) 10px,
+var(--dp-pink) 10px,
+var(--dp-pink) 20px
+);
 transform: translateY(-50%);
 }
 .dp-slider-thumb {
 position: absolute;
 top: 50%;
-transform: translate(-50%, -50%);
 font-size: 24px;
 line-height: 1;
 filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+transform: translate(-50%, -50%);
 transition: left 0.5s ease;
 z-index: 2;
 }
 .dp-thought-box {
-background: #fff4a8;
-border: 2px solid #000;
+background: var(--dp-yellow);
+border: 2px solid var(--dp-darkest);
 padding: 12px;
-color: #000;
+color: var(--dp-darkest);
 font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
 line-height: 1.4;
-position: relative;
 margin-top: 10px;
 box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
 font-weight: 500;
+position: relative;
 }
-.dp-thought-box::before {
-content: '$5 $6';
+.dp-thought-label {
 position: absolute;
 top: -10px;
 left: 10px;
-background: #000;
-color: #fff;
+background: var(--dp-darkest);
+color: var(--dp-white);
 font-size: 0.8em;
 padding: 1px 4px;
-border: 1px solid #fff4a8;
+border: 1px solid var(--dp-yellow);
 }
 .dp-soundtrack {
 margin-top: 12px;
-border-top: 1px dashed #444;
 padding-top: 8px;
+border-top: 1px dashed var(--dp-border-light);
 font-size: 0.85em;
-color: #888;
+color: var(--dp-gray-light);
 display: flex;
 align-items: center;
 gap: 6px;
-z-index: 3;
 position: relative;
+z-index: 3;
 }
 .dp-soundtrack-title {
-color: #c41e3a;
+color: var(--dp-red);
 font-weight: bold;
 }
 </style>
 <div class='dp-container'>
-<svg class='dp-bullet-svg' style='top: -5px; right: 5px; transform: rotate(-30deg);' viewBox='0 0 100 100'>
+<svg class='dp-bullet-svg' style='top:-5px;right:5px;transform:rotate(-30deg)' viewBox='0 0 100 100'>
 <g stroke='#000' stroke-width='3' fill='none' stroke-linecap='round'>
-<line x1='90' y1='50' x2='80' y2='50' />
+<line x1='90' y1='50' x2='80' y2='50'/>
 </g>
 <path d='M50 25 L60 40 L80 35 L70 50 L85 65 L65 65 L55 85 L45 65 L25 70 L35 50 L15 35 L40 40 Z' fill='#fff' stroke='#000' stroke-width='3' stroke-linejoin='round'/>
 <circle cx='50' cy='50' r='12' fill='#000'/>
 </svg>
-<svg class='dp-bullet-svg' style='bottom: 15px; left: -5px; transform: rotate(25deg);' viewBox='0 0 100 100'>
+<svg class='dp-bullet-svg' style='bottom:15px;left:-5px;transform:rotate(25deg)' viewBox='0 0 100 100'>
 <g stroke='#000' stroke-width='3' fill='none' stroke-linecap='round'>
-<line x1='10' y1='50' x2='20' y2='50' />
+<line x1='10' y1='50' x2='20' y2='50'/>
 </g>
 <path d='M35 30 L40 40 L55 35 L45 50 L50 60 L35 55 L30 70 L25 55 L10 50 L25 45 L20 30 Z' fill='#fff' stroke='#000' stroke-width='2.5' stroke-linejoin='round'/>
 <circle cx='32' cy='50' r='8' fill='#000'/>
 </svg>
-<svg class='dp-bullet-svg' style='top: 70px; right: -5px; transform: rotate(-15deg);' viewBox='0 0 100 100'>
+<svg class='dp-bullet-svg' style='top:70px;right:-5px;transform:rotate(-15deg)' viewBox='0 0 100 100'>
 <path d='M65 40 L70 50 L85 45 L75 60 L80 70 L65 65 L60 80 L55 65 L40 60 L55 55 L50 40 Z' fill='#fff' stroke='#000' stroke-width='2.5' stroke-linejoin='round'/>
 <circle cx='65' cy='60' r='8' fill='#000'/>
 </svg>
-<svg class='dp-bullet-svg' style='bottom: -15px; right: 20px; transform: rotate(-90deg);' viewBox='0 0 100 100'>
+<svg class='dp-bullet-svg' style='bottom:-15px;right:20px;transform:rotate(-90deg)' viewBox='0 0 100 100'>
 <path d='M65 40 L70 50 L85 45 L75 60 L80 70 L65 65 L60 80 L55 65 L40 60 L55 55 L50 40 Z' fill='#fff' stroke='#000' stroke-width='2.5' stroke-linejoin='round'/>
 <circle cx='65' cy='60' r='8' fill='#000'/>
 </svg>
-<svg class='dp-bullet-svg' style='top: 185px; right: 25px; transform: rotate(40deg);' viewBox='0 0 100 100'>
+<svg class='dp-bullet-svg' style='top:175px;right:25px;transform:rotate(40deg)' viewBox='0 0 100 100'>
 <g stroke='#000' stroke-width='3' fill='none' stroke-linecap='round'>
-<line x1='10' y1='50' x2='20' y2='50' />
-<line x1='50' y1='10' x2='50' y2='20' />
+<line x1='10' y1='50' x2='20' y2='50'/>
+<line x1='50' y1='10' x2='50' y2='20'/>
 </g>
 <path d='M50 25 L60 40 L80 35 L70 50 L85 65 L65 65 L55 85 L45 65 L25 70 L35 50 L15 35 L40 40 Z' fill='#fff' stroke='#000' stroke-width='3' stroke-linejoin='round'/>
 <circle cx='50' cy='50' r='12' fill='#000'/>
@@ -1564,10 +1611,10 @@ font-weight: bold;
 <span class='dp-mask-icon'>XX</span> MAXIMUM EFFORT
 </div>
 <div class='dp-grid'>
-<div class='dp-info-box'><span>📅</span> <span>$1</span></div>
-<div class='dp-info-box'><span>🕒</span> <span>$2</span></div>
-<div class='dp-info-box'><span>📍</span> <span>$3</span></div>
-<div class='dp-info-box'><span>🧤</span> <span>$4</span></div>
+<div class='dp-info-box'><span>📅</span><span>$1</span></div>
+<div class='dp-info-box'><span>🕒</span><span>$2</span></div>
+<div class='dp-info-box full-width'><span>🌯</span><span>$3</span></div>
+<div class='dp-info-box full-width'><span>🧤</span><span>$4</span></div>
 </div>
 <div class='dp-mission' data-mission='$7'>$7</div>
 <div class='dp-love-container'>
@@ -1577,16 +1624,334 @@ font-weight: bold;
 </div>
 <div class='dp-slider-wrapper'>
 <div class='dp-slider-track'></div>
-<div class='dp-slider-fill' style='width: $8%;'></div>
-<div class='dp-slider-thumb' style='left: $8%;'>🦄</div>
+<div class='dp-slider-fill' style='width:$8%'></div>
+<div class='dp-slider-thumb' style='left:$8%'>🦄</div>
 </div>
-<div class='dp-thought-box'>$9</div>
+<div class='dp-thought-box'>
+<span class='dp-thought-label'>$5 $6</span>
+$9
+</div>
 </div>
 <div class='dp-soundtrack'>
 <span>📼 MIXTAPE:</span>
 <span class='dp-soundtrack-title'>$11</span>
 </div>
-</div>`}
+</div>`},
+{
+        name: "심플1",
+        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션 (이 줄을 지워보세요)]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도 변동 (이 줄을 지워보세요)]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
+        regex: `<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\\]]+?)\\s*\\|\\s*([^|\\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\\]]+?)\\s*\\|\\s*(?:([^|\\\]\\s]+)\\s+)?([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>`,
+        template: `<style>
+.list-mission[data-mission=""] { display: none !important; }
+.list-score-badge[data-change=""] { display: none !important; }
+.list-container {
+--list-white: #FFFFFF;
+--list-border: #333333;
+--list-text: #2D2D2D;
+--list-text-sub: #6B6B6B;
+--list-orange: #FFB088;
+--list-pink: #FFB4C3;
+--list-mint: #B8E6C3;
+--list-yellow: #FFE5B8;
+--list-lavender: #D4C5F9;
+--list-peach: #FFD4B8;
+font-size: var(--messageTextFontSize);
+color: var(--list-text);
+}
+.list-content {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+.list-card {
+border: 2px solid var(--list-border);
+border-radius: 10px;
+background: var(--list-white);
+box-shadow: 2px 2px 0 var(--list-border);
+overflow: hidden;
+font-weight: 700;
+}
+.list-item {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 8px 12px;
+border-bottom: 1px dashed var(--list-border);
+}
+.list-item:last-child {
+border-bottom: none;
+}
+.list-item-dual {
+gap: 8px;
+}
+.list-dual-group,
+.list-text-group {
+display: flex;
+align-items: center;
+gap: 8px;
+flex: 1;
+min-width: 0;
+}
+.list-item-dual .list-dual-group:first-child { flex: 1.5; }
+.list-item-dual .list-dual-group:last-child  { flex: 1; }
+.list-icon-wrapper {
+width: 30px;
+height: 30px;
+border-radius: 8px;
+border: 2px solid var(--list-border);
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+.list-icon-orange  { background: var(--list-orange); }
+.list-icon-pink    { background: var(--list-pink); }
+.list-icon-mint    { background: var(--list-mint); }
+.list-icon-yellow  { background: var(--list-yellow); }
+.list-icon-lavender{ background: var(--list-lavender); }
+.list-icon-peach   { background: var(--list-peach); }
+.list-value {
+line-height: 1.3;
+word-wrap: break-word;
+color: var(--list-text);
+}
+.list-mission-item {
+flex-direction: column;
+align-items: flex-start;
+gap: 3px;
+padding: 12px;
+background: var(--list-yellow);
+border: 2px solid var(--list-border);
+border-radius: 10px;
+box-shadow: 2px 2px 0 var(--list-border);
+}
+.list-mission-tag {
+padding: 4px 8px;
+border-radius: 5px;
+background: var(--list-border);
+color: var(--list-white);
+font-weight: 700;
+font-size: 0.9em;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+}
+.list-thought-section {
+padding: 12px;
+border-radius: 10px;
+border: 2px solid var(--list-border);
+background: var(--list-pink);
+box-shadow: 2px 2px 0 var(--list-border);
+}
+.list-thought-header {
+display: flex;
+align-items: center;
+flex-wrap: wrap;
+gap: 6px;
+margin-bottom: 3px;
+}
+.list-percentage {
+padding: 5px 10px;
+border-radius: 6px;
+background: var(--list-border);
+color: var(--list-white);
+font-weight: 700;
+}
+.list-score-badge {
+font-weight: 600;
+font-size: 0.8em;
+}
+.list-thought-box {
+padding: 10px;
+border-radius: 8px;
+border: 2px solid var(--list-border);
+background: var(--list-white);
+line-height: 1.5;
+}
+.list-soundtrack {
+display: flex;
+align-items: center;
+gap: 6px;
+padding: 10px 12px;
+border-radius: 10px;
+border: 2px solid var(--list-border);
+background: var(--list-lavender);
+box-shadow: 2px 2px 0 var(--list-border);
+font-size: 0.85em;
+}
+</style>
+<div class='list-container'>
+<div class='list-content'>
+<div class='list-card'>
+<div class='list-item list-item-dual'>
+<div class='list-dual-group'>
+<div class='list-icon-wrapper list-icon-orange'>📅</div>
+<div class='list-text-group'>
+<div class='list-value'>$1</div>
+</div>
+</div>
+<div class='list-dual-group'>
+<div class='list-icon-wrapper list-icon-pink'>🕒</div>
+<div class='list-text-group'>
+<div class='list-value'>$2</div>
+</div>
+</div>
+</div>
+<div class='list-item'>
+<div class='list-icon-wrapper list-icon-mint'>🌏</div>
+<div class='list-text-group'>
+<div class='list-value'>$3</div>
+</div>
+</div>
+<div class='list-item'>
+<div class='list-icon-wrapper list-icon-peach'>🧤</div>
+<div class='list-text-group'>
+<div class='list-value'>$4</div>
+</div>
+</div>
+<div class='list-item'>
+<div class='list-icon-wrapper list-icon-yellow'>$5</div>
+<div class='list-text-group'>
+<div class='list-value'>$6</div>
+</div>
+</div>
+</div>
+<div class='list-mission' data-mission='$7'>
+<div class='list-item list-mission-item'>
+<span class='list-mission-tag'>Mission</span>
+<div class='list-value'>$7</div>
+</div>
+</div>
+<div class='list-thought-section'>
+<div class='list-thought-header'>
+<div class='list-percentage'>❤ $8% <span class='list-score-badge' data-change='$10'>: $10</span></div>
+</div>
+<div class='list-thought-box'>💭 $9</div>
+</div>
+<div class='list-soundtrack'>
+<span>🎵</span>
+<div><strong>Soundtrack:</strong> $11</div>
+</div>
+</div>
+</div>`
+    },
+{
+        name: "심플2",
+        input: `<Info_panel>\n[08.16 (2일차) | 07:15 | 세라피나의 숲속 오두막]\n[검은 선드레스 | 😊 평온함, 보살피는 기분]\n[Mission: 미션 (이 줄을 지워보세요)]\n[Love Score: 50] They look much better this morning. The color is returning to their cheeks. (오늘 아침은 훨씬 좋아 보이네. 뺨에 혈색이 돌아오고 있어.)\n[Score Change: +5 호감도 변동 (이 줄을 지워보세요)]\n[Soundtrack: (노래추천)]\n</Info_panel>`,
+        regex: `<Info_panel>\\s*(?:___|[-*]{3,})?\\s*\\[\\s*(?:DAY\\s*)?([^|\\]]+?)\\s*\\|\\s*([^|\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*\\[\\s*([^|\\]]+?)\\s*\\|\\s*([^\\]]+?)\\s*\\]\\s*(?:\\[\\s*(?:Mission:\\s*)?([^\\]]+?)\\s*\\])?\\s*\\[\\s*(?:Love Score:\\s*)?([^\\]]+?)\\s*\\]\\s*([^\\[]*?)(?:\\[\\s*(?:Score\\s*Change:\\s*)?([^\\]]+?)\\s*\\])?\\s*(?:\\[\\s*Soundtrack:\\s*([^\\]]+?)\\s*\\])?\\s*<\\/Info_panel>`,
+        template: `<style>
+.simple-mission[data-mission=""] { display: none !important; }
+.simple-score[data-change=""] { display: none !important; }
+.simple-container {
+--simple-bg: #F5F5F5;
+--simple-white: #FFFFFF;
+--simple-border: #DDDDDD;
+--simple-text: #333333;
+--simple-text-light: #666666;
+--simple-accent: #FFF3E0;
+background: var(--simple-white);
+border: 1px solid var(--simple-border);
+border-radius: 8px;
+padding: 12px;
+max-width: 100%;
+margin: 8px 0;
+font-size: var(--messageTextFontSize);
+}
+.simple-row {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 8px 0;
+border-bottom: 1px dashed var(--simple-border);
+}
+.simple-row:last-child {
+border-bottom: none;
+}
+.simple-label {
+color: var(--simple-text);
+}
+.simple-value {
+color: var(--simple-text-light);
+text-align: right;
+flex: 1;
+margin-left: 12px;
+word-wrap: break-word;
+}
+.simple-total {
+background: var(--simple-accent);
+padding: 10px;
+border-radius: 6px;
+margin-top: 8px;
+}
+.simple-total .simple-row {
+padding: 4px 0 0 0;
+border-bottom: none;
+}
+.simple-total .simple-label {
+font-weight: 600;
+}
+.simple-total .simple-value {
+font-weight: 600;
+color: var(--simple-text);
+}
+.simple-score-row .simple-value {
+color: var(--simple-text-light);
+font-weight: 400;
+font-size: 0.85em;
+}
+.simple-thought {
+padding: 10px;
+background: var(--simple-bg);
+border-radius: 6px;
+margin-top: 8px;
+color: var(--simple-text-light);
+line-height: 1.5;
+}
+</style>
+<div class='simple-container'>
+<div class='simple-row'>
+<span class='simple-label'>Date</span>
+<span class='simple-value'>$1</span>
+</div>
+<div class='simple-row'>
+<span class='simple-label'>Time</span>
+<span class='simple-value'>$2</span>
+</div>
+<div class='simple-row'>
+<span class='simple-label'>Location</span>
+<span class='simple-value'>$3</span>
+</div>
+<div class='simple-row'>
+<span class='simple-label'>Outfit</span>
+<span class='simple-value'>$4</span>
+</div>
+<div class='simple-row'>
+<span class='simple-label'>Info</span>
+<span class='simple-value'>$5</span>
+</div>
+<div class='simple-mission' data-mission='$6'>
+<div class='simple-row'>
+<span class='simple-label'>Mission</span>
+<span class='simple-value'>$6</span>
+</div>
+</div>
+<div class='simple-total'>
+<div class='simple-row'>
+<span class='simple-label'>Affection</span>
+<span class='simple-value'>$7%</span>
+</div>
+<div class='simple-score' data-change='$9'>
+<div class='simple-row simple-score-row'>
+<span class='simple-value'>$9</span>
+</div>
+</div>
+</div>
+<div class='simple-thought'>$8</div>
+<div class='simple-row'>
+<span class='simple-label'>Soundtrack</span>
+<span class='simple-value'>$10</span>
+</div>
+</div>`
+    }
 ];
 
 /*{
