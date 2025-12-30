@@ -452,6 +452,23 @@ padding: 4px 0;
 padding: 0 4px;
 }
 
+/* index.html - CSS 추가 */
+.CodeMirror-selected {
+    background: #d7d4f0 !important;
+    opacity: 1 !important;
+}
+
+.CodeMirror-focused .CodeMirror-selected {
+    background: #b4d5fe !important;
+    opacity: 1 !important;
+}
+
+/* 모바일에서도 선택 영역 보이도록 */
+div.CodeMirror span.CodeMirror-selectedtext {
+    background: none !important;
+}
+
+
 /* 창크기 조절 */
 .resizer {
   width: 2px;
