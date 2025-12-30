@@ -30,8 +30,8 @@ window.onload = function() {
             lineNumbers: true,
             lineWrapping: true,
             theme: 'default',
-            inputStyle: 'contenteditable',
-            touchDragDelay: 200
+            //inputStyle: 'contenteditable',
+            //touchDragDelay: 200
         });
 
         editor.on('change', () => {
@@ -64,33 +64,66 @@ function initMobileView() {
 
 /* 2. 텍스트 찾기 (CodeMirror 방식) */
 function findText(direction = 'next') {
-  const query = document.getElementById('find-query').value;
-  if (!query) {
-    alert("검색어를 입력해주세요.");
-    return;
-  }
-
-  const startPos = (direction === 'next')
-    ? editor.getCursor('to')
-    : editor.getCursor('from');
-
-  let cursor = editor.getSearchCursor(query, startPos, { caseFold: true });
-
-  if (!cursor.find(direction === 'prev')) {
-    const loopStart = (direction === 'next')
-      ? { line: 0, ch: 0 }
-      : { line: editor.lineCount(), ch: 0 };
-
-    cursor = editor.getSearchCursor(query, loopStart, { caseFold: true });
-
-    if (!cursor.find(direction === 'prev')) {
-      alert("일치하는 단어가 없습니다.");
-      return;
+    const query = document.getElementById('find-query').value;
+    if (!query) {
+        alert("검색어를 입력해주세요.");
+        return;
     }
-  }
 
-  editor.setSelection(cursor.from(), cursor.to());
-  editor.scrollIntoView({ from: cursor.from(), to: cursor.to() }, 150);
+    const startPos = (direction === 'next')
+        ? editor.getCursor('to')
+        : editor.getCursor('from');
+    let cursor = editor.getSearchCursor(query, startPos, { caseFold: true });
+    if (!cursor.find(direction === 'prev')) {
+        const loopStart = (direction === 'next')
+            ? { line: 0, ch: 0 }
+            : { line: editor.lineCount(), ch: 0 };
+        cursor = editor.getSearchCursor(query, loopStart, { caseFold: true });
+        if (!cursor.find(direction === 'prev')) {
+            alert("일치하는 단어가 없습니다.");
+            return;
+        }
+    }
+
+    // 모바일 감지
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        // 모바일: 네이티브 DOM 선택 사용
+        const from = cursor.from();
+        const to = cursor.to();
+        
+        // CodeMirror 선택
+        editor.setSelection(from, to);
+        editor.focus();
+        
+        // DOM 레벨에서도 강제로 선택
+        setTimeout(() => {
+            const cmContent = editor.getWrapperElement().querySelector('.CodeMirror-code');
+            if (cmContent) {
+                const range = document.createRange();
+                const selection = window.getSelection();
+                
+                // CodeMirror의 내부 요소 찾기
+                const lines = cmContent.querySelectorAll('.CodeMirror-line');
+                if (lines.length > from.line) {
+                    const textNode = lines[from.line].firstChild;
+                    if (textNode) {
+                        range.setStart(textNode, Math.min(from.ch, textNode.textContent.length));
+                        range.setEnd(textNode, Math.min(to.ch, textNode.textContent.length));
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    }
+                }
+            }
+        }, 50);
+        
+        editor.scrollIntoView({ from, to }, 150);
+    } else {
+        // 데스크톱: 기존 방식
+        editor.setSelection(cursor.from(), cursor.to());
+        editor.scrollIntoView({ from: cursor.from(), to: cursor.to() }, 150);
+    }
 }
 
 function toggleReplaceBox() {
