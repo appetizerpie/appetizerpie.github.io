@@ -209,6 +209,8 @@ function initPresets() {
             rawInput.value = p.input || "";
             regexInput.value = p.regex || "";
             setTemplateValue(p.template || "");
+            autoResizeTextarea(rawInput);
+            autoResizeTextarea(regexInput);
             render();
         };
         presetContainer.appendChild(btn);
@@ -479,4 +481,9 @@ function initWidthInputKeydown() {
             }
         });
     }
+}
+
+function autoResizeTextarea(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
 }

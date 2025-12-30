@@ -47,7 +47,7 @@
             <div class="label-row">
                 <label>1. 출력 형식 입력</label>
             </div>
-            <textarea id="raw-input" placeholder="출력 형식을 입력하세요..."></textarea>
+            <textarea id="raw-input" placeholder="출력 형식을 입력하세요..." oninput="autoResizeTextarea(this)"></textarea>
         </div>
 
         <div class="input-group">
@@ -55,7 +55,7 @@
                 <label>2. 정규식 입력</label>
                 <button class="copy-btn" onclick="copyToClipboard('regex-input', this)">복사</button>
             </div>
-            <textarea id="regex-input" placeholder="정규식을 입력하세요..." rows="1"></textarea>
+            <textarea id="regex-input" placeholder="정규식을 입력하세요..." oninput="autoResizeTextarea(this)"></textarea>
             <div id="regex-error" class="error" style="display:none;"></div>
             
             <div class="group-section">

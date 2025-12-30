@@ -234,6 +234,7 @@ h2 { margin: 0; }
   backdrop-filter: blur(10px);
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  overflow-y: auto;
   }
 
 
@@ -264,6 +265,10 @@ textarea, input {
   resize: vertical;
   transition: all 0.2s;
   font-family: 'Consolas', 'Pretendard';
+}
+
+textarea {
+    overflow: hidden;
 }
 
 textarea:focus, input:focus {
