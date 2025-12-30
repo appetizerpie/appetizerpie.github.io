@@ -46,6 +46,7 @@
         <div class="input-group">
             <div class="label-row">
                 <label>1. 출력 형식 입력</label>
+                <button onclick="copyToClipboard('raw-input', this)" class="copy-btn">복사</button>
             </div>
             <textarea id="raw-input" placeholder="출력 형식을 입력하세요..." oninput="autoResizeTextarea(this)"></textarea>
         </div>
@@ -70,7 +71,10 @@
         <div class="input-group">
             <div class="label-row">
                 <label>3. 디자인 태그 입력</label>
+                <div>
+                <button onclick="selectAllEditor()" class="copy-btn">전체선택</button>
                 <button class="copy-btn" onclick="copyToClipboard('template-input', this)">복사</button>
+                </div>
             </div>
             <div class="find-container">
                 <input type="text" id="find-query" class="find-input" placeholder="검색할 단어">
@@ -103,7 +107,7 @@
                                 <hr>
                                 <span class="notice-badge step-5">✔</span>프리셋을 눌러서 미리보기.<br>
                                 <span class="notice-badge step-5">✔</span>내용/캡쳐를 구분해서 볼 수 있습니다.<br>
-                                <span class="notice-badge step-5">✔</span>입력창 모서리를 드래그해서 크기조절하세요.<br>
+                                <span class="notice-badge step-5">✔</span>입력창은 자동으로 늘어납니다.<br>
                                 <hr>
                                 <h3>📌 메모</h3>
                                 <span class="note-item"></span>

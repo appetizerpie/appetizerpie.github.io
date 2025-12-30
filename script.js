@@ -30,8 +30,8 @@ window.onload = function() {
             lineNumbers: true,
             lineWrapping: true,
             theme: 'default',
-            //inputStyle: 'contenteditable',
-            //touchDragDelay: 200
+            inputStyle: 'contenteditable',
+            touchDragDelay: 200
         });
 
         editor.on('change', () => {
@@ -486,4 +486,11 @@ function initWidthInputKeydown() {
 function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto';
     textarea.style.height = textarea.scrollHeight + 'px';
+}
+
+function selectAllEditor() {
+    if (editor) {
+        editor.execCommand('selectAll');
+        editor.focus();
+    }
 }
