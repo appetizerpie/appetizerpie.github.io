@@ -3,42 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SillyTavern 빠른 답장 에디터</title>
+    <title>ST 빠른 답장 에디터</title>
     <style>
         :root {
-            --bg-primary: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --bg-primary: linear-gradient(135deg, #d4f4dd 0%, #fef5cd 50%, #e0f2fe 100%);
             --card-bg: rgba(255, 255, 255, 0.9);
-            --accent: #ff9a9e;
-            --accent-hover: #fecfef;
-            --text: #333;
-            --border: rgba(255, 154, 158, 0.3);
+            --accent: #81C784;
+            --text: #5a5a3d;
+            --border: #D4E5D8;
             --shadow: 0 8px 32px rgba(0,0,0,0.1);
             --toast-success: #4caf50;
             --toast-error: #f44336;
+            --Btn1-bg: linear-gradient(135deg, #81C784 0%, #66BB6A 100%);
+            --Btn2-bg: linear-gradient(135deg, #FFE4B5 0%, #FFD700 100%);
+            --Btn3-bg: linear-gradient(135deg, #E0E0E0 0%, #BDBDBD 100%);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
             background: var(--bg-primary);
             color: var(--text);
-            padding: 20px;
             min-height: 100vh;
             line-height: 1.5;
             position: relative;
+            padding: 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 80vw;
             margin: 0 auto;
-            backdrop-filter: blur(10px);
-        }
-        h1 {
-            text-align: center;
-            background: linear-gradient(135deg, var(--accent), #fecfef);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 30px;
-            font-size: 2.2em;
         }
         .controls {
             display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px;
@@ -47,45 +38,42 @@
             padding: 12px 24px;
             border: none;
             border-radius: 25px;
-            background: linear-gradient(135deg, var(--accent), #ff6b9d);
+            background: var(--Btn1-bg);
             color: white;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: var(--shadow);
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,154,158,0.4); }
+        button:hover { transform: translateY(-2px);}
         button:active { transform: translateY(0); }
+        .save-btn {
+            background: var(--Btn2-bg);
+            color: var(--text);
+        }
         .editor {
             background: var(--card-bg);
             border-radius: 20px;
             padding: 30px;
             box-shadow: var(--shadow);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
         }
         table {
             width: 100%; border-collapse: collapse; margin-bottom: 20px;
-            font-size: 0.95em;
+            font-size: 0.95em;;
         }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
-        th { background: linear-gradient(135deg, var(--accent-hover), white); font-weight: bold; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border); border-top: 1px solid var(--border); text-align: center;}
+        th { background: #FAFBF7; font-weight: bold;}
         input, textarea {
             width: 100%; padding: 10px; border: 1px solid var(--border);
             border-radius: 10px; background: white; transition: border 0.3s;
             font-family: inherit; font-size: 0.95em;
         }
-        input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(255,154,158,0.2); }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent);}
         textarea { resize: vertical; min-height: 80px; }
         .copy-btn {
-            background: linear-gradient(135deg, #a8e6cf, #56c596);
+            background: var(--Btn1-bg);
             padding: 8px 16px;
             font-size: 0.9em;
         }
-        .copy-btn:hover {
-            box-shadow: 0 8px 24px rgba(86, 197, 150, 0.4);
-        }
-        /* 토스트 팝업 */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -127,23 +115,22 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌸 SillyTavern 빠른 답장 에디터</h1>
         <div class="controls">
             <input type="file" id="fileInput" accept=".json" style="display: none;">
             <button onclick="document.getElementById('fileInput').click()">📁 파일 불러오기</button>
             <button onclick="addNewEntry()">➕ 새 항목 추가</button>
-            <button onclick="saveFile()">💾 저장</button>
+            <button class="save-btn" onclick="saveFile()">💾 저장</button>
         </div>
         <div class="editor">
             <table id="qrTable">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Label</th>
+                        <th style="width: 55px;">ID</th>
+                        <th style="width: 200px;">Label</th>
                         <th>Title</th>
                         <th>Message</th>
-                        <th>복사</th>
-                        <th>삭제</th>
+                        <th style="width: 120px;">복사</th>
+                        <th style="width: 120px;">삭제</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -188,7 +175,7 @@
                     <td><textarea onchange="updateItem(${item.id}, 'title', this.value)">${escapeHtml(item.title || '')}</textarea></td>
                     <td><textarea onchange="updateItem(${item.id}, 'message', this.value)">${escapeHtml(item.message || '')}</textarea></td>
                     <td><button class="copy-btn" onclick="copyMessage(${item.id})">📋 복사</button></td>
-                    <td><button onclick="deleteItem(${item.id})" style="background: #ff6b6b;">🗑️</button></td>
+                    <td><button class="del-btn" onclick="deleteItem(${item.id})" style="background: #ff6b6b;">🗑️</button></td>
                 `;
             });
         }
