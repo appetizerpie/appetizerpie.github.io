@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SillyTavern 빠른 답장 에디터</title>
+    <style>
+        :root {
+            --bg-primary: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --accent: #ff9a9e;
+            --accent-hover: #fecfef;
+            --text: #333;
+            --border: rgba(255, 154, 158, 0.3);
+            --shadow: 0 8px 32px rgba(0,0,0,0.1);
+            --toast-success: #4caf50;
+            --toast-error: #f44336;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text);
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.5;
+            position: relative;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, var(--accent), #fecfef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+        .controls {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(135deg, var(--accent), #ff6b9d);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,154,158,0.4); }
+        button:active { transform: translateY(0); }
+        .editor {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+        }
+        table {
+            width: 100%; border-collapse: collapse; margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: linear-gradient(135deg, var(--accent-hover), white); font-weight: bold; }
+        input, textarea {
+            width: 100%; padding: 10px; border: 1px solid var(--border);
+            border-radius: 10px; background: white; transition: border 0.3s;
+            font-family: inherit; font-size: 0.95em;
+        }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 10px rgba(255,154,158,0.2); }
+        textarea { resize: vertical; min-height: 80px; }
+        .copy-btn {
+            background: linear-gradient(135deg, #a8e6cf, #56c596);
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+        .copy-btn:hover {
+            box-shadow: 0 8px 24px rgba(86, 197, 150, 0.4);
+        }
+        /* 토스트 팝업 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            min-width: 300px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast.success {
+            background: linear-gradient(135deg, var(--toast-success), #66bb6a);
+        }
+        .toast.error {
+            background: linear-gradient(135deg, var(--toast-error), #ef5350);
+        }
+        @media (max-width: 768px) {
+            .toast {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                min-width: auto;
+                max-width: calc(100% - 40px);
+            }
+            body { padding: 10px; }
+            table { font-size: 0.85em; }
+            .controls { flex-direction: column; align-items: center; }
+            th, td { padding: 10px 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌸 SillyTavern 빠른 답장 에디터</h1>
+        <div class="controls">
+            <input type="file" id="fileInput" accept=".json" style="display: none;">
+            <button onclick="document.getElementById('fileInput').click()">📁 파일 불러오기</button>
+            <button onclick="addNewEntry()">➕ 새 항목 추가</button>
+            <button onclick="saveFile()">💾 저장</button>
+        </div>
+        <div class="editor">
+            <table id="qrTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Label</th>
+                        <th>Title</th>
+                        <th>Message</th>
+                        <th>복사</th>
+                        <th>삭제</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 토스트 팝업 -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        let qrData = { 
+            version: 2, 
+            name: '요약', 
+            disableSend: true, 
+            placeBeforeInput: false, 
+            injectInput: true, 
+            color: 'rgba(0,0,0,0)', 
+            onlyBorderColor: false, 
+            qrList: [], 
+            idIndex: 23 
+        };
+
+        const toast = document.getElementById('toast');
+
+        function showToast(msg, type = 'success') {
+            toast.textContent = msg;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function loadTable() {
+            const tbody = document.querySelector('#qrTable tbody');
+            tbody.innerHTML = '';
+            qrData.qrList.forEach((item) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td><input value="${escapeHtml(item.label || '')}" onchange="updateItem(${item.id}, 'label', this.value)"></td>
+                    <td><textarea onchange="updateItem(${item.id}, 'title', this.value)">${escapeHtml(item.title || '')}</textarea></td>
+                    <td><textarea onchange="updateItem(${item.id}, 'message', this.value)">${escapeHtml(item.message || '')}</textarea></td>
+                    <td><button class="copy-btn" onclick="copyMessage(${item.id})">📋 복사</button></td>
+                    <td><button onclick="deleteItem(${item.id})" style="background: #ff6b6b;">🗑️</button></td>
+                `;
+            });
+        }
+
+        function escapeHtml(text) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        function updateItem(id, field, value) {
+            const item = qrData.qrList.find(qr => qr.id === id);
+            if (item) item[field] = value;
+        }
+
+        function copyMessage(id) {
+            const item = qrData.qrList.find(qr => qr.id === id);
+            if (!item || !item.message) {
+                showToast('복사할 메시지가 없습니다', 'error');
+                return;
+            }
+
+            const message = item.message;
+            const startTag = '<Request>';
+            const endTag = '</Request>';
+            const startIndex = message.indexOf(startTag);
+            const endIndex = message.indexOf(endTag);
+
+            let textToCopy;
+            if (startIndex !== -1 && endIndex !== -1 && startIndex < endIndex) {
+                textToCopy = message.substring(startIndex + startTag.length, endIndex).trim();
+            } else {
+                textToCopy = message;
+            }
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast('📋 메시지 복사 완료!');
+            }).catch(err => {
+                showToast('복사 실패: ' + err.message, 'error');
+            });
+        }
+
+        function deleteItem(id) {
+            qrData.qrList = qrData.qrList.filter(qr => qr.id !== id);
+            loadTable();
+            showToast('🗑️ 항목 삭제됨');
+        }
+
+        function addNewEntry() {
+            const newId = qrData.idIndex + 1;
+            qrData.qrList.push({
+                id: newId,
+                showLabel: false,
+                label: '',
+                title: '',
+                message: '',
+                contextList: [],
+                preventAutoExecute: true,
+                isHidden: false,
+                executeOnStartup: false,
+                executeOnUser: false,
+                executeOnAi: false,
+                executeOnChatChange: false,
+                executeOnGroupMemberDraft: false,
+                executeOnNewChat: false,
+                executeBeforeGeneration: false,
+                automationId: ''
+            });
+            qrData.idIndex = newId;
+            loadTable();
+            showToast('➕ 새 항목 추가됨');
+        }
+
+        function saveFile() {
+            qrData.qrList.forEach(item => {
+                if (item.executeBeforeGeneration === undefined) item.executeBeforeGeneration = false;
+            });
+            const dataStr = JSON.stringify(qrData, null, 4);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = qrData.name + '.json';
+            link.click();
+            showToast('💾 파일 저장 완료!');
+        }
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    try {
+                        qrData = JSON.parse(evt.target.result);
+                        loadTable();
+                        showToast('📁 파일 로드됨');
+                    } catch (err) {
+                        showToast('JSON 오류: ' + err.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        loadTable();
+    </script>
+</body>
+</html>
