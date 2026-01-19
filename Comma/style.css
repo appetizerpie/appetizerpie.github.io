@@ -239,7 +239,7 @@ textarea[readonly] {
 @media (max-width: 768px) {
   .container {
     padding: 5px;
-    padding-bottom: max(40px, env(safe-area-inset-bottom));
+    padding-bottom: max(100px, env(safe-area-inset-bottom));
   }
 
   .section {
