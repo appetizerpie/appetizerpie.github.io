@@ -21,6 +21,7 @@ const pages = {
 };
 
 let currentPage = null;
+let loadedScripts = new Set();
 
 async function loadPage(pageName) {
   if (currentPage === pageName) return;
@@ -28,7 +29,12 @@ async function loadPage(pageName) {
   const page = pages[pageName];
   if (!page) return;
 
-  removePageAssets();
+    // 완전히 새로 시작하려면 페이지 리로드
+  if (loadedScripts.size > 0 && currentPage !== null) {
+    // 쿼리 파라미터로 페이지 전달 후 리로드
+    window.location.href = `?page=${pageName}`;
+    return;
+  }
 
   try {
     const response = await fetch(page.html);
@@ -41,10 +47,10 @@ async function loadPage(pageName) {
       const scripts = Array.isArray(page.js) ? page.js : [page.js];
       for (const src of scripts) {
         await loadJS(src);
+        loadedScripts.add(src);
       }
     }
 
-    // 타이틀 업데이트
     const titleElement = document.getElementById('page-title');
     if (titleElement && page.title) {
       titleElement.textContent = page.title;
@@ -53,7 +59,7 @@ async function loadPage(pageName) {
     // 페이지별 초기화
     if (pageName === 'regex' && typeof initApp === 'function') {
       setTimeout(initApp, 0);
-    } else if (pageName === 'qr' && typeof initComma === 'function') {
+    } else if (pageName === 'comma' && typeof initComma === 'function') {
       setTimeout(initComma, 0);
     } else if (pageName === 'theme' && typeof initThemeEditor === 'function') {
       setTimeout(initThemeEditor, 0);
@@ -93,11 +99,6 @@ function loadJS(src) {
   });
 }
 
-function removePageAssets() {
-  document.querySelectorAll('.page-css').forEach(el => el.remove());
-  document.querySelectorAll('.page-js').forEach(el => el.remove());
-}
-
 function toggleDropdown(e) {
   document.getElementById('dropdown-menu').classList.toggle('hidden');
   e.currentTarget.classList.toggle('open');
@@ -115,4 +116,7 @@ document.querySelectorAll('.nav-item').forEach(btn => {
   btn.addEventListener('click', () => loadPage(btn.dataset.page));
 });
 
-loadPage('regex');
+// URL 파라미터 확인
+const urlParams = new URLSearchParams(window.location.search);
+const initialPage = urlParams.get('page') || 'regex';
+loadPage(initialPage);
