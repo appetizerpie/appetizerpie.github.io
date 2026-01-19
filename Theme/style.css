@@ -238,7 +238,7 @@
 @media (max-width: 768px) {
   .editor-container {
     padding: 5px;
-    padding-bottom: max(100px, env(safe-area-inset-bottom));  /* 추가 */
+    padding-bottom: 60px;
   }
 
   .editor-section {
