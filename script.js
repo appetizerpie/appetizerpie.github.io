@@ -52,11 +52,11 @@ async function loadPage(pageName) {
 
     // 페이지별 초기화
     if (pageName === 'regex' && typeof initApp === 'function') {
-      setTimeout(initApp, 150);
+      setTimeout(initApp, 0);
     } else if (pageName === 'qr' && typeof initComma === 'function') {
-      setTimeout(initComma, 150);
+      setTimeout(initComma, 0);
     } else if (pageName === 'theme' && typeof initThemeEditor === 'function') {
-      setTimeout(initThemeEditor, 150);
+      setTimeout(initThemeEditor, 0);
     }
 
     document.querySelectorAll('.nav-item').forEach(btn => {
