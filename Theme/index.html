@@ -1,0 +1,70 @@
+<div class="editor-container">
+  <!-- 파일 업로드 섹션 -->
+  <section class="editor-section">
+    <div class="section-title">📁 파일 선택(json, txt파일)</div>
+    <input 
+      type="file" 
+      id="fileInput" 
+      accept=".json,.txt" 
+      class="file-input"
+    >
+  </section>
+
+  <!-- 검색 섹션 -->
+  <section class="editor-section">
+    <div class="search-group">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="검색어 입력..."
+        class="search-input"
+      >
+      <div class="search-buttons">
+        <button onclick="themeEditor.searchPrev()" class="btn btn-secondary">이전</button>
+        <button onclick="themeEditor.searchNext()" class="btn btn-secondary">다음</button>
+        <button onclick="toggleReplaceBox()" class="btn btn-toggle" id="toggleReplaceBtn">바꾸기</button>
+      </div>
+    </div>
+
+    <!-- 바꾸기 박스 -->
+  <div id="replaceBox" class="replace-box">
+    <div class="search-group">
+      <input 
+        type="text" 
+        id="replaceInput" 
+        placeholder="바꿀 내용..."
+        class="search-input"
+      >
+    <div class="search-buttons">
+      <button onclick="themeEditor.replaceOne()" class="btn btn-secondary">한 개</button>
+      <button onclick="themeEditor.replaceAll()" class="btn btn-secondary">모두</button>
+    </div>
+  </div>
+  </div>
+
+    
+
+  </section>
+
+  <!-- 에디터 섹션 -->
+  <section class="editor-section editor-main">
+    <div class="section-title">✏️ 내용 보기
+      <span id="searchCounter" style="font-size: 13px; color: #66BB6A; font-weight: 600; margin-left: 8px;"></span>
+    </div>
+    <div class="editor-wrapper">
+      <textarea id="cssEditor"></textarea>
+    </div>
+  </section>
+
+  <!-- 액션 버튼 -->
+  <section class="editor-section">
+    <div class="button-group">
+      <button onclick="themeEditor.copyAllCSS()" class="btn btn-success">
+        내용 복사
+      </button>
+      <button onclick="themeEditor.downloadJSON()" class="btn btn-primary">
+        다운로드
+      </button>
+    </div>
+  </section>
+</div>

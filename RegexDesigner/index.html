@@ -1,0 +1,106 @@
+<div class="preset-bar" id="preset-container">
+  <div class="preset-bar-left">
+    <span class="preset-label">PRESETS:</span>
+    <button class="reset-btn" onclick="resetAll()">초기화</button>
+  </div>
+
+  <div class="view-modes">
+    <button class="view-btn" id="view-toggle" onclick="toggleViewMode()">내용보기</button>
+    <button class="view-btn" id="theme-toggle">🌙</button>
+    <button class="view-btn" id="width-toggle-btn" onclick="toggleWidthControl()">📏</button>
+    <div class="width-control" id="width-control">
+      <input type="number" id="preview-width-input" placeholder="너비(px)" min="200" max="2000">
+      <button class="view-btn" onclick="setPreviewWidth()">적용</button>
+      <button class="view-btn" onclick="resetPreviewWidth()">리셋</button>
+    </div>
+  </div>
+</div>
+
+<!-- 모바일 탭 -->
+<div class="mobile-tabs">
+    <button class="mobile-tab active" onclick="switchMobileTab('editor')">편집</button>
+    <button class="mobile-tab" onclick="switchMobileTab('preview')">미리보기</button>
+</div>
+
+<div class="container">
+    <div class="editor-side" id="editor-side">
+        <div class="input-group">
+            <div class="label-row">
+                <label>1. 출력 형식 입력</label>
+                <button onclick="copyToClipboard('raw-input', this)" class="copy-btn">복사</button>
+            </div>
+            <textarea id="raw-input" placeholder="출력 형식을 입력하세요..." oninput="autoResizeTextarea(this)"></textarea>
+        </div>
+
+        <div class="input-group">
+            <div class="label-row">
+                <label>2. 정규식 입력</label>
+                <button class="copy-btn" onclick="copyToClipboard('regex-input', this)">복사</button>
+            </div>
+            <textarea id="regex-input" placeholder="정규식을 입력하세요..." oninput="autoResizeTextarea(this)"></textarea>
+            <div id="regex-error" class="error" style="display:none;"></div>
+            
+            <div class="group-section">
+                <div class="group-header" onclick="toggleGroupList()">
+                    <span>매칭 그룹 정보 ($n)</span>
+                    <span id="group-toggle-icon">▲</span>
+                </div>
+                <div id="group-list" class="collapsed"></div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="label-row">
+                <label>3. 디자인 태그 입력</label>
+                <div>
+                <button onclick="selectAllEditor()" class="copy-btn">전체선택</button>
+                <button class="copy-btn" onclick="copyToClipboard('template-input', this)">복사</button>
+                </div>
+            </div>
+            <div class="find-container">
+                <input type="text" id="find-query" class="find-input" placeholder="검색할 단어">
+                <button class="preset-btn search-btn" onclick="findText('prev')">▲</button>
+                <button class="preset-btn search-btn" onclick="findText('next')">▼</button>
+                <button class="preset-btn search-btn" id="toggle-replace-btn" onclick="toggleReplaceBox()">
+                    바꾸기
+                </button>
+                </div>
+
+                <div class="find-container replace-box" id="replace-box">
+                <input type="text" id="replace-query" class="find-input" placeholder="바꿀 단어">
+                <button class="preset-btn search-btn" onclick="replaceOne()">한개만</button>
+                <button class="preset-btn search-btn" onclick="replaceAll()">모두</button>
+            </div>
+            <textarea id="template-input"></textarea>
+        </div>
+    </div>
+
+<div class="resizer" id="resizer"></div>
+    <div class="preview-side" id="preview-side">
+        <div id="preview-render">
+            <div class="render-wrapper" id="render-target">
+                <div class="notice-box">
+                                <h3>💡 사용 방법</h3>
+                                <span class="notice-badge step-1">1</span>채팅 내 출력 형식을 입력하세요.<br>
+                                <span class="notice-badge step-2">2</span>정규식 패턴을 입력하세요.<br>
+                                <span class="notice-badge step-3">3</span>디자인을 입력하세요.<br>
+                                <span class="notice-badge step-4">4</span>실시간으로 결과를 확인할 수 있습니다.
+                                <hr>
+                                <span class="notice-badge step-5">✔</span>프리셋을 눌러서 미리보기.<br>
+                                <span class="notice-badge step-5">✔</span>내용/캡쳐를 구분해서 볼 수 있습니다.<br>
+                                <span class="notice-badge step-5">✔</span>입력창은 자동으로 늘어납니다.<br>
+                                <hr>
+                                <h3>📌 메모</h3>
+                                <span class="note-item"></span>
+                                <span class="note-item">박스/내용이 별도인 정규식은 못봅니다. <font color=#999>(언젠간 할거임..)</font></span>
+                                <span class="note-item">(주관주의) ST에서 디자인 오류 발생시
+                                    <span class="note-item">주석처리<font color="#5a7c6f">(/*&nbsp;*/)</font>지워보기</span>
+                                    <span class="note-item">큰따옴표<font color="#5a7c6f">("&nbsp;")</font>대신 작은따옴표<font color="#5a7c6f">('&nbsp;')</font>사용해보기</span>
+                                    <span class="note-item">줄바꿈 없애보기</span>
+                                </span>
+                                <div class="update">🔔 업로드 완료<br></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

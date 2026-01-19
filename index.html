@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ST 도구</title>
+  <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="codemirror/codemirror.css">
+    <link  rel="stylesheet" href="codemirror/dialog.css">
+    <script src="codemirror/codemirror.js"></script>
+    <script src="codemirror/xml.js"></script>
+    <script src="codemirror/searchcursor.js"></script>
+    <script src="codemirror/search.js"></script>
+    <script src="codemirror/dialog.js"></script>
+</head>
+<body>
+  <!-- 고정 헤더 -->
+  <header id="main-header">
+    <div class="menu-dropdown">
+      <h2 onclick="toggleDropdown(event)" class="dropdown-title">
+      <span id="page-title">🎨 ST 정규식 디자인 미리보기</span>
+    </h2>
+      <div id="dropdown-menu" class="dropdown-content hidden">
+        <button class="nav-item active" data-page="regex">정규식 디자인</button>
+        <button class="nav-item" data-page="comma">쉼표 제거기</button>
+        <button class="nav-item" data-page="theme">테마 & TXT 뷰어</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 동적 콘텐츠 영역 -->
+  <main id="app"></main>
+
+  <script src="script.js"></script>
+</body>
+</html>
