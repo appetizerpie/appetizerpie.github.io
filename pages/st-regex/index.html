@@ -1,0 +1,123 @@
+<!-- 프리셋 바 -->
+<div class="preset-bar">
+    <div class="preset-bar-left">
+        <button class="reset-btn" onclick="resetAll()">초기화</button>
+    </div>
+    <div class="view-modes">
+        <button class="mobile-tab active" onclick="switchMobileTab('editor')">편집</button>
+        <button class="mobile-tab" onclick="switchMobileTab('preview')">미리보기</button>
+        <button id="view-toggle" class="view-btn" onclick="toggleViewMode()">캡쳐보기</button>
+    </div>
+</div>
+<!-- 에디터 영역 -->
+<div class="container">
+    <div class="editor-side" id="editor-side">
+        <div class="input-group">
+            <div class="label-row">
+                <label onclick="toggleSection('raw-input-section')" style="cursor: pointer;">1. 출력 텍스트
+                <span id="raw-input-toggle-icon">··· [접기]</span>
+                </label>
+                <button class="copy-btn" onclick="copyToClipboard('raw-input', this)">📋 복사</button>
+            </div>
+            <div id="raw-input-section">
+                <textarea id="raw-input" placeholder="원본 텍스트를 입력하세요..." oninput="autoResizeTextarea(this)"></textarea>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="label-row">
+                <label onclick="toggleSection('regex-input-section')" style="cursor: pointer;">2. 정규식 입력
+                <span id="regex-input-toggle-icon">··· [접기]</span>
+                </label>
+                <button class="copy-btn" onclick="copyToClipboard('regex-input', this)">📋 복사</button>
+            </div>
+             <div id="regex-input-section">
+            <textarea id="regex-input" placeholder="정규식을 입력하세요." oninput="autoResizeTextarea(this)"></textarea>
+            <div id="regex-error" class="error" style="display:none;"></div>
+            
+            <div class="group-section">
+                <div class="group-header" onclick="toggleGroupList()">
+                    <span>매칭 그룹 정보 ($n)</span>
+                    <span id="group-toggle-icon">▼</span>
+                </div>
+                <div id="group-list" class="collapsed"></div>
+            </div>
+            </div>
+        </div>
+        <div class="input-group">
+            <div class="label-row">
+                <label>3. 디자인 코드</label>
+                <div style="display: flex; gap: 5px;">
+                    <button class="copy-btn" onclick="copyToClipboard('template-input', this)">📋 복사</button>
+                    <button class="copy-btn" onclick="selectAllEditor()">전체선택</button>
+                </div>
+            </div>
+            <div class="find-container">
+                <input type="text" id="find-query" class="find-input" placeholder="검색어 입력...">
+                <button class="search-btn" onclick="findText('prev')">이전</button>
+                <button class="search-btn" onclick="findText('next')">다음</button>
+                <button id="toggle-replace-btn" class="search-btn" onclick="toggleReplaceBox()">바꾸기</button>
+            </div>
+            <div id="replace-box" class="replace-box">
+                <div class="find-container">
+                    <input type="text" id="replace-query" class="find-input" placeholder="바꿀 내용...">
+                    <button class="search-btn" onclick="replaceOne()">하나만</button>
+                    <button class="search-btn" onclick="replaceAll()">전체 바꾸기</button>
+                </div>
+            </div>
+            <textarea id="template-input" placeholder="디자인을 입력하세요."></textarea>
+        </div>
+        <button class="save-json-btn" onclick="saveAsRegexJSON()">
+            💾 파일로 저장
+        </button>
+        <!-- 커스텀 모달 -->
+<div id="custom-modal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>정규식 저장</h3>
+        </div>
+        <div class="modal-body">
+            <label for="script-name-input">파일 이름</label>
+            <input type="text" id="script-name-input" placeholder="예: 인포블럭 디자인" value="디자인1">
+            <P style="margin:5px;">✅ AI출력  ✅ 형식 표시만 상태로 저장됩니다.</P>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-cancel" onclick="closeModal()">취소</button>
+            <button class="modal-btn modal-btn-confirm" onclick="confirmSave()">저장</button>
+        </div>
+    </div>
+</div>
+
+    </div>
+<!-- 리사이즈 바 -->
+    <div class="resizer" id="resizer"></div>
+<!-- 미리보기 영역 -->
+    <div class="preview-side" id="preview-side">
+        <div id="preview-render">
+            <div id="render-target" class="render-wrapper">
+                <div class="notice-box">
+                    <h3>💡 사용 방법</h3>
+                        <span class="notice-badge step-1">1</span>채팅 내 출력 형식을 입력하세요.<br>
+                        <span class="notice-badge step-2">2</span>정규식 패턴을 입력하세요.<br>
+                        <span class="notice-badge step-3">3</span>디자인을 입력하세요.<br>
+                        <span class="notice-badge step-4">4</span>실시간으로 결과를 확인할 수 있습니다.
+                        <hr>
+                        <span class="notice-badge step-5">✔</span>프리셋을 눌러서 미리보기.<br>
+                        <span class="notice-badge step-5">✔</span>내용/캡쳐를 구분해서 볼 수 있습니다.<br>
+                        <span class="notice-badge step-5">✔</span>입력창은 자동으로 늘어납니다.<br>
+                        <hr>
+                        <h3>📌 메모</h3>
+                        <span class="note-item"></span>
+                        <span class="note-item">박스/내용이 별도인 정규식은 못봅니다. <font color=#999>(언젠간 할거임..)</font></span>
+                        <span class="note-item">(주관주의) ST에서 디자인 오류 발생시
+                            <span class="note-item">주석처리<font color="#5a7c6f">(/*&nbsp;*/)</font>지워보기</span>
+                            <span class="note-item">큰따옴표<font color="#5a7c6f">("&nbsp;")</font>대신 작은따옴표<font color="#5a7c6f">('&nbsp;')</font>사용해보기</span>
+                            <span class="note-item">줄바꿈 없애보기</span>
+                        </span>
+                        <div class="update">🔔 구조 변경 / 메뉴 2종 추가<br></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

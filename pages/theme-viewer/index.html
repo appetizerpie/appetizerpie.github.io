@@ -1,0 +1,89 @@
+    <div id="navbar-container"></div>
+
+    <div class="editor-container">
+        <!-- 파일 선택 섹션 -->
+        <div class="editor-section">
+            <h3 class="section-title">📁 파일 선택</h3>
+            <input type="file" id="fileInput" accept=".json,.txt" class="file-input">
+        </div>
+
+        <!-- 색상 편집기 -->
+        <div id="colorEditorWrapper" style="display: none;">
+            <div class="editor-section">
+                <h3 class="section-title clickable" onclick="toggleColorEditor()">
+                    🎨 색상 편집기 <span id="colorToggleIcon">[펼치기]</span>
+                </h3>
+                <div id="colorEditorSection" style="display: none;">
+                    <div id="colorGrid" class="color-grid"></div>
+                    <div class="color-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="themeEditor.resetColors()">원래대로</button>
+                        <button class="btn btn-paste btn-sm" onclick="themeEditor.pasteColors()">📋 붙여넣기</button>
+                        <button class="btn btn-copy btn-sm" onclick="themeEditor.copyAllColors()">📄 복사</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+                <!-- 찾기/바꾸기 섹션 -->
+        <div class="editor-section">
+            <h3 class="section-title clickable" onclick="toggleSearchSection()">
+                <div>🔍 찾기 / 바꾸기 <span id="searchCounter"></span></div> <span id="searchToggleIcon">[펼치기]</span>
+            </h3>
+            <div id="searchSectionContent" style="display: none;">
+                <div class="search-group">
+                    <input type="text" id="searchInput" class="search-input" placeholder="검색어 입력...">
+                    <div class="search-buttons">
+                        <button class="btn btn-primary" onclick="themeEditor.searchPrev()">이전</button>
+                        <button class="btn btn-primary" onclick="themeEditor.searchNext()">다음</button>
+                        
+                        <button id="toggleReplaceBtn" class="btn btn-toggle" onclick="toggleReplaceBox()">바꾸기</button>
+                    </div>
+                    
+                </div>
+                
+                <div id="replaceBox" class="replace-box">
+                    <div class="search-group">
+                        <input type="text" id="replaceInput" class="search-input" placeholder="바꿀 내용...">
+                        <div class="search-buttons">
+                            <button class="btn btn-secondary" onclick="themeEditor.replaceOne()">하나만</button>
+                            <button class="btn btn-secondary" onclick="themeEditor.replaceAll()">모두 바꾸기</button>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- CSS 편집기 -->
+        <div class="editor-section">
+            <h3 class="section-title">
+                ✏️ CSS 편집기
+                <div class="editor-title-buttons">
+                    <button class="btn btn-icon" onclick="themeEditor.copyAllCSS()">📄 복사</button>
+                    <button class="btn btn-success" onclick="themeEditor.downloadJSON()">💾 다운로드</button>
+                </div>
+            </h3>
+            <div class="editor-main">
+                <div class="editor-wrapper">
+                    <textarea id="cssEditor"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 붙여넣기 모달 -->
+    <div id="pasteModal" class="paste-modal">
+        <div class="paste-modal-content">
+            <div class="paste-modal-header">
+                <h3>색상 붙여넣기</h3>
+                <button class="paste-close-btn" onclick="themeEditor.closePasteModal()">×</button>
+            </div>
+            <div class="paste-modal-body">
+                <p class="paste-help">아래 형식으로 붙여넣으세요:</p>
+                <div class="paste-example">주요 텍스트: #333333<br>그림자 색상: #000000 (A: 0.29)<br><br>또는<br><br>주요 텍스트 333333<br>그림자 색상 000000 A 0.29</div>
+                <textarea id="pasteTextarea" class="paste-textarea" placeholder="여기에 복사한 색상 정보를 붙여넣으세요..."></textarea>
+            </div>
+            <div class="paste-modal-footer">
+                <button class="btn btn-secondary" onclick="themeEditor.closePasteModal()">취소</button>
+                <button class="btn btn-success" onclick="themeEditor.applyPastedColors()">적용</button>
+            </div>
+        </div>
+    </div>

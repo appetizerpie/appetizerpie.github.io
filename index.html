@@ -1,37 +1,68 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ST 도구</title>
-  <link rel="stylesheet" href="style.css">
-
-    <link rel="stylesheet" href="codemirror/codemirror.css">
-    <link  rel="stylesheet" href="codemirror/dialog.css">
-    <script src="codemirror/codemirror.js"></script>
-    <script src="codemirror/xml.js"></script>
-    <script src="codemirror/searchcursor.js"></script>
-    <script src="codemirror/search.js"></script>
-    <script src="codemirror/dialog.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>도구 모음</title>
+<link rel="stylesheet" href="codemirror/lib/codemirror.css">
+<script src="codemirror/lib/codemirror.js"></script>
+<script src="codemirror/addon/mode/simple.js"></script>
+<script src="codemirror/mode/xml/xml.js"></script>
+<script src="codemirror/addon/search/searchcursor.js"></script>
+<script src="codemirror/mode/css/css.js"></script>
+<script src="codemirror/mode/javascript/javascript.js"></script>
+<script src="codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<script src="codemirror/mode/handlebars/handlebars.js"></script>
+<script src="codemirror/handlebars.min.js"></script>
+<!-- 공통 스타일 -->
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/navbar.css">
+<link rel="stylesheet" href="css/main.css">
 </head>
-<body>
-  <!-- 고정 헤더 -->
-  <header id="main-header">
-    <div class="menu-dropdown">
-      <h2 onclick="toggleDropdown(event)" class="dropdown-title">
-      <span id="page-title">🎨 ST 정규식 디자인 미리보기</span>
-    </h2>
-      <div id="dropdown-menu" class="dropdown-content hidden">
-        <button class="nav-item active" data-page="regex">정규식 디자인</button>
-        <button class="nav-item" data-page="comma">쉼표 제거기</button>
-        <button class="nav-item" data-page="theme">테마 & TXT 뷰어</button>
-      </div>
+<body data-theme="light">
+<!-- 네비게이션 바 -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="dropdown">
+            <button class="dropdown-btn" id="currentPageTitle">정규식 디자인 미리보기<span class="arrow">▼</span></button>
+            <div class="dropdown-content">
+                <a href="#/" data-title="정규식 디자인 미리보기">정규식 디자인 미리보기</a>
+                <a href="#/theme-viewer" data-title="테마 & TXT 뷰어">테마 & TXT 뷰어</a>
+                <a href="#/schema-design" data-title="스키마 디자인 미리보기">스키마 디자인 미리보기</a>
+            </div>
+        </div>
+
+        <div class="nav-actions">
+            <button id="globalThemeToggle" class="icon-btn" title="전체 테마 전환">🌙</button>
+            <button id="helpBtn" class="icon-btn" title="도움말">?</button>
+        </div>
     </div>
-  </header>
+</nav>
 
-  <!-- 동적 콘텐츠 영역 -->
-  <main id="app"></main>
+<main id="app"></main>
+<div id="helpModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>📖 사용 방법</h2>
+        <div id="helpContent">
+        <h3>🎯 도구 선택</h3>
+            <p>상단 메뉴를 클릭하여 원하는 도구를 선택하세요.</p>
 
-  <script src="script.js"></script>
+        <h3>🛠️ 도구 목록</h3>
+        <ul>
+            <li><strong>ST 정규식 미리보기:</strong> SillyTavern용 정규식 패턴을 실시간으로 테스트하고 디자인합니다.</li>
+            <li><strong>테마 & TXT 뷰어:</strong> 테마 파일과 텍스트를 미리 봅니다.</li>
+            <li><strong>스키마 디자인:</strong> JSON 스키마 구조를 디자인합니다. (준비중)</li>
+        </ul>
+
+        <h3>🎨 테마 전환</h3>
+            <p>🌙 버튼으로 밝은/어두운 테마를 전환할 수 있습니다.</p>
+        </div>
+    </div>
+</div>
+
+<script src="js/theme.js"></script>
+<script src="js/navbar.js"></script>
+<script src="js/router.js"></script>
 </body>
 </html>
