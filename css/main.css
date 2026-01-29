@@ -122,3 +122,32 @@ body {
 .close:hover {
     color: var(--text-primary);
 }
+
+/* CodeMirror 모바일 환경 줌 및 터치 버그 방지 */
+.CodeMirror textarea {
+    font-size: 16px !important;
+}
+.CodeMirror, .CodeMirror-scroll {
+    touch-action: auto !important;
+    -webkit-overflow-scrolling: auto !important;
+}
+
+/* 길이 늘리기 버튼 공통 플로그인 CSS */
+.expand-btn {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px 20px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.expand-btn:hover {
+    background: #e8e8e8;
+    color: var(--text-primary);
+}
+

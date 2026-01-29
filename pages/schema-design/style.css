@@ -311,7 +311,6 @@ textarea:focus, input:focus {
     border-radius: 8px;
     font-size: 0.85rem;
     overflow: hidden;
-    -webkit-overflow-scrolling: touch;
 }
 
 .search-highlight {
@@ -522,8 +521,6 @@ textarea:focus, input:focus {
         min-height: 150px;
         max-height: 300px;
         overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-y;
     }
 
     #preview-render { padding: 15px; }

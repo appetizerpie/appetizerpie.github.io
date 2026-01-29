@@ -590,16 +590,23 @@ function confirmSave() {
     });
   }
 
+  const placement = [];
+  if (document.getElementById('chk-user') && document.getElementById('chk-user').checked) placement.push(1);
+  if (document.getElementById('chk-ai') && document.getElementById('chk-ai').checked) placement.push(2);
+
+  const markdownOnly = document.getElementById('chk-markdown') ? document.getElementById('chk-markdown').checked : true;
+  const promptOnly = document.getElementById('chk-prompt') ? document.getElementById('chk-prompt').checked : false;
+
   const regexJSON = {
     "id": generateUUID(),
     "scriptName": scriptName,
     "findRegex": cleanRegex,
     "replaceString": template,
     "trimStrings": [""],
-    "placement": [2],
+    "placement": placement.length > 0 ? placement : [2],
     "disabled": false,
-    "markdownOnly": true,
-    "promptOnly": false,
+    "markdownOnly": markdownOnly,
+    "promptOnly": promptOnly,
     "runOnEdit": true,
     "substituteRegex": 0,
     "minDepth": null,
@@ -619,3 +626,44 @@ function confirmSave() {
 
   closeModal();
 }
+
+window.loadRegexJSON = function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const json = JSON.parse(e.target.result);
+      if (json.findRegex !== undefined && json.replaceString !== undefined) {
+        if (window.regexInput) window.regexInput.value = json.findRegex;
+        setTemplateValue(json.replaceString);
+        if (window.rawInput) {
+          window.rawInput.value = "";
+          window.rawInput.placeholder = "여기에 채팅 내 출력되는 형식을 입력하세요";
+        }
+        if (window.regexInput) autoResizeTextarea(window.regexInput);
+        if (window.rawInput) autoResizeTextarea(window.rawInput);
+        if (json.placement) {
+            if (document.getElementById('chk-user')) document.getElementById('chk-user').checked = json.placement.includes(1);
+            if (document.getElementById('chk-ai')) document.getElementById('chk-ai').checked = json.placement.includes(2);
+        }
+        if (json.markdownOnly !== undefined && document.getElementById('chk-markdown')) {
+            document.getElementById('chk-markdown').checked = json.markdownOnly;
+        }
+        if (json.promptOnly !== undefined && document.getElementById('chk-prompt')) {
+            document.getElementById('chk-prompt').checked = json.promptOnly;
+        }
+
+        render();
+        alert("성공적으로 불러왔습니다.");
+      } else {
+        alert("올바른 정규식 JSON 형식이 아닙니다.");
+      }
+    } catch (err) {
+      alert("JSON 파일을 파싱하는 중 오류가 발생했습니다.");
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+};

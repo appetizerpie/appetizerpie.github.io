@@ -286,7 +286,6 @@ textarea:focus, input:focus {
   border-radius: 8px;
   font-size: 0.85rem;
   overflow: hidden;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* 검색 하이라이트 스타일 */
@@ -488,8 +487,6 @@ textarea:focus, input:focus {
     min-height: 150px;
     max-height: 300px;
     overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
   }
 
   #preview-render { padding: 15px; }
@@ -685,7 +682,7 @@ textarea:focus, input:focus {
   color: var(--text-color);
 }
 
-.modal-body input {
+.modal-body input[type="text"] {
   width: 100%;
   padding: 12px;
   border: 2px solid var(--textarea-foucs-border);
@@ -696,9 +693,14 @@ textarea:focus, input:focus {
   box-sizing: border-box;
 }
 
-.modal-body input:focus {
+.modal-body input[type="text"]:focus {
   outline: none;
   border-color: var(--textarea-foucs-border);
+}
+
+.modal-body input[type="checkbox"] {
+  width: auto;
+  margin-right: 5px;
 }
 
 .modal-footer {

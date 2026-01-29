@@ -1,0 +1,20 @@
+{
+    "id": "05e3e431-1862-4273-8dab-5a1cf19ded5f",
+    "scriptName": "1)팩트 - 내용",
+    "findRegex": "/(?:\\[)?Title:\\s*([^\\]\\n]+?)(?:\\])?\\s*(?:\\[)?Content:\\s*([\\s\\S]*?)(?:\\])?\\s*(?=(?:\\n\\s*(?:\\[)?Title:)|(?:<\\/?Facts>)|$)/gi",
+    "replaceString": "<style>\n.Facts-dn-item {\n--tape-bg: rgba(255, 235, 59, 0.6);\n--tape-rotate: -2deg;\nbackground: #fff;\nborder: 1px solid #eee;\nborder-radius: 2px;\npadding: 15px;\nmargin: 15px 0;\nposition: relative;\nbox-shadow: 2px 3px 8px rgba(0, 0, 0, 0.06);\ntransform: rotate(-0.5deg);\nz-index: 1;\n}\n.Facts-dn-item:nth-child(5n+2) { --tape-bg: rgba(100, 200, 255, 0.5); --tape-rotate: 1.5deg; }\n.Facts-dn-item:nth-child(5n+3) { --tape-bg: rgba(255, 150, 150, 0.5); --tape-rotate: -1deg; }\n.Facts-dn-item:nth-child(5n+4) { --tape-bg: rgba(150, 255, 150, 0.5); --tape-rotate: 2deg; }\n.Facts-dn-item:nth-child(5n+5) { --tape-bg: rgba(200, 150, 255, 0.5); --tape-rotate: -2.5deg; }\n.Facts-dn-tape {\nposition: absolute;\ntop: -10px;\nleft: 50%;\ntransform: translateX(-50%) rotate(var(--tape-rotate));\nwidth: 80px;\nheight: 25px;\nbackground-color: var(--tape-bg);\nborder-left: 2px dotted rgba(0, 0, 0, 0.1);\nborder-right: 2px dotted rgba(0, 0, 0, 0.1);\nopacity: 0.9;\n}\n.Facts-dn-header {\nposition: relative;\nmargin-bottom: 12px;\ndisplay: inline-block;\n}\n.Facts-dn-marker {\nposition: absolute;\nbottom: 2px;\nleft: 0;\nwidth: 100%;\nheight: 0.5em;\nbackground-color: rgba(255, 200, 0, 0.4);\nborder-radius: 2px;\nz-index: 1;\n}\n.Facts-dn-title {\nposition: relative;\nz-index: 2;\nfont-weight: 900;\ncolor: #000;\nletter-spacing: 0.5px;\nmargin: 0;\npadding: 0;\n}\n.Facts-dn-content {\nline-height: 1.6;\ncolor: #555;\nwhite-space: pre-wrap;\nposition: relative;\nz-index: 1;\n}\n.Facts-dn-deco {\nposition: absolute;\nbottom: 5px;\nright: 10px;\ncolor: #ddd;\ntransform: rotate(15deg);\n}\n</style>\n<div class='Facts-dn-item'>\n<div class='Facts-dn-tape'></div>\n<div class='Facts-dn-header'>\n<span class='Facts-dn-marker'></span>\n<div class='Facts-dn-title'>$1</div>\n</div>\n<div class='Facts-dn-content'>$2</div>\n<div class='Facts-dn-deco'>?</div>\n</div>",
+    "trimStrings": [
+        "```"
+    ],
+    "placement": [
+        1,
+        2
+    ],
+    "disabled": false,
+    "markdownOnly": true,
+    "promptOnly": false,
+    "runOnEdit": true,
+    "substituteRegex": 0,
+    "minDepth": null,
+    "maxDepth": null
+}
