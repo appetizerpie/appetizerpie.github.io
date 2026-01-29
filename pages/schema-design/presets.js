@@ -110,7 +110,8 @@ padding-bottom: 12px;
 /* --- 정보 그리드 (3단/2단) --- */
 .retro-info-grid {
 display: flex;
-gap: 10px;
+flex-direction: column;
+gap: 2px;
 margin-bottom: 10px;
 }
 .retro-info-item {
@@ -119,9 +120,8 @@ flex: 1;
 padding: 4px 0;
 border-bottom: 1px dashed #B6B6B6;
 align-items: center;
-}
-.retro-info-item.wide {
-flex: 1.5;
+text-align: right;
+justify-content: space-between;
 }
 .retro-label {
 font-weight: bold;
@@ -202,7 +202,7 @@ font-style: italic;
 .retro-tabs-wrapper {
 display: flex;
 flex-wrap: wrap;
-padding: 0 12px 12px 10px;
+padding: 0 12px 3px 10px;
 margin: 4px 2px 0 2px;
 }
 .retro-tab-input {
@@ -242,7 +242,7 @@ to { opacity: 1; transform: translateY(0); }
 <div class='retro-container'>
 <!-- 상단 타이틀바 -->
 <div class='retro-title-bar'>
-<span>&gt;&gt; {{data.date}} {{data.time}} // system info </span>
+<span>&gt;&gt; {{data.date}} {{data.time}} </span>
 </div>
 <!-- 공통 정보 (날짜/시간/위치/날씨) -->
 <div class='retro-content'>
@@ -251,17 +251,15 @@ to { opacity: 1; transform: translateY(0); }
 <span class='retro-label'>🌏 LOCATION</span>
 <span class='retro-value'>{{data.location}}</span>
 </div>
-<div class='retro-info-item wide'>
+<div class='retro-info-item'>
 <span class='retro-label'>☁️ WEATHER</span>
 <span class='retro-value'>{{data.weather}}</span>
 </div>
-</div>
-<div class='retro-info-grid'>
 <div class='retro-info-item'>
 <span class='retro-label'>🎯 FOCUS</span>
 <span class='retro-value'>{{data.topics.primaryTopic}}</span>
 </div>
-<div class='retro-info-item wide'>
+<div class='retro-info-item'>
 <span class='retro-label'>⭐ MOOD</span>
 <span class='retro-value'>{{data.topics.interactionTheme}}, {{data.topics.emotionalTone}}</span>
 </div>
@@ -429,7 +427,8 @@ padding-bottom: 12px;
 /* --- 정보 그리드 (3단/2단) --- */
 .retro-info-grid {
 display: flex;
-gap: 10px;
+flex-direction: column;
+gap: 2px;
 margin-bottom: 10px;
 }
 .retro-info-item {
@@ -438,9 +437,8 @@ flex: 1;
 padding: 4px 0;
 border-bottom: 1px dashed #B6B6B6;
 align-items: center;
-}
-.retro-info-item.wide {
-flex: 1.5;
+text-align: right;
+justify-content: space-between;
 }
 .retro-label {
 font-weight: bold;
@@ -462,7 +460,6 @@ padding: 8px;
 }
 .retro-mission-text {
 word-break: break-word;
-margin-left: 8px;
 font-weight: normal;
 }
 /* --- 러브스코어 --- */
@@ -562,7 +559,7 @@ to { opacity: 1; transform: translateY(0); }
 <div class='retro-container'>
 <!-- 상단 타이틀바 -->
 <div class='retro-title-bar'>
-<span>&gt;&gt; {{data.date}} {{data.time}} // system info </span>
+<span>&gt;&gt; {{data.date}} {{data.time}} </span>
 </div>
 <!-- 공통 정보 (날짜/시간/위치/날씨) -->
 <div class='retro-content'>
@@ -571,17 +568,15 @@ to { opacity: 1; transform: translateY(0); }
 <span class='retro-label'>🌏 LOCATION</span>
 <span class='retro-value'>{{data.location}}</span>
 </div>
-<div class='retro-info-item wide'>
+<div class='retro-info-item'>
 <span class='retro-label'>☁️ WEATHER</span>
 <span class='retro-value'>{{data.weather}}</span>
 </div>
-</div>
-<div class='retro-info-grid'>
 <div class='retro-info-item'>
 <span class='retro-label'>🎯 FOCUS</span>
 <span class='retro-value'>{{data.topics.primaryTopic}}</span>
 </div>
-<div class='retro-info-item wide'>
+<div class='retro-info-item'>
 <span class='retro-label'>⭐ MOOD</span>
 <span class='retro-value'>{{data.topics.interactionTheme}}, {{data.topics.emotionalTone}}</span>
 </div>
