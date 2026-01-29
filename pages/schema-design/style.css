@@ -358,6 +358,7 @@ textarea:focus, input:focus {
     border-radius: 12px;
     padding: 25px;
     line-height: 1.5;
+    color: var(--textarea-text);
 }
 
 .notice-box h3 {
