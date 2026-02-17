@@ -48,6 +48,10 @@ function initApp() {
       lineNumbers: true,
       lineWrapping: true,
       theme: 'default',
+      colorpicker: {
+          mode: 'edit',
+          type: 'sketch'
+      }
     });
     window.editor.on('change', () => {
       render();

@@ -289,6 +289,10 @@ function initApp() {
             mode: 'htmlmixed',
             lineNumbers: true,
             lineWrapping: true,
+            colorpicker: {
+                mode: 'edit',
+                type: 'sketch'
+            }
         });
         
         window.editor.setValue('');

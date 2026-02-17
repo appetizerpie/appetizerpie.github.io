@@ -14,7 +14,7 @@ class Router {
                 template: 'pages/theme-viewer/index.html',
                 scripts: ['pages/theme-viewer/script.js'],
                 styles: ['pages/theme-viewer/style.css'],
-                title: '테마 & TXT 뷰어'
+                title: 'JSON & TXT 뷰어'
             },
             '/schema-design': {
                 template: 'pages/schema-design/index.html',
@@ -69,7 +69,6 @@ async handleRoute() {
         const html = await response.text();
         this.app.innerHTML = html;
 
-        // 제목 업데이트
         if (window.navbarManager) {
             window.navbarManager.updateTitle(route.title);
         }
