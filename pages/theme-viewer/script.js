@@ -36,7 +36,11 @@ window.themeEditor = {
             lineWrapping: true,
             indentUnit: 2,
             tabSize: 2,
-            indentWithTabs: false
+            indentWithTabs: false,
+            colorpicker: {
+            mode: 'edit',
+            type: 'sketch'
+        }
         });
 
         document.getElementById('fileInput')?.addEventListener('change', this.handleFileSelect.bind(this));
@@ -59,39 +63,45 @@ window.themeEditor = {
     },
 
     handleFileSelect: function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            this.clearSearchHighlights();
+            this.searchMatches = [];
+            this.currentMatchIndex = -1;
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchCounter').textContent = '';
+            document.getElementById('replaceInput').value = '';
 
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                this.clearSearchHighlights();
-                this.searchMatches = [];
-                this.currentMatchIndex = -1;
-                document.getElementById('searchInput').value = '';
-                document.getElementById('searchCounter').textContent = '';
-                document.getElementById('replaceInput').value = '';
-
-                if (file.name.endsWith('.txt')) {
-                    this.originalJSON = null;
-                    this.editor.setValue(event.target.result || "");
-                    this.hideColorEditor();
-                    showToast(`✅ ${file.name} 로드 완료`);
-                    return;
-                }
-
-                this.originalJSON = JSON.parse(event.target.result);
-                if (this.originalJSON.hasOwnProperty('custom_css')) {
-                    this.editor.setValue(this.originalJSON.custom_css || "");
-                }
-                this.showColorEditor();
+            if (file.name.endsWith('.txt')) {
+                this.originalJSON = null;
+                this.editor.setValue(event.target.result || "");
+                this.hideColorEditor();
                 showToast(`✅ ${file.name} 로드 완료`);
-            } catch (error) {
-                showToast('❌ 파일 파싱 오류');
+                return;
             }
-        };
-        reader.readAsText(file);
-    },
+
+            const parsedJSON = JSON.parse(event.target.result);
+            
+            if (parsedJSON.hasOwnProperty('custom_css')) {
+                this.originalJSON = parsedJSON;
+                this.editor.setValue(parsedJSON.custom_css || "");
+                this.showColorEditor();
+                showToast(`✅ ${file.name} (테마) 로드 완료`);
+            } else {
+                this.originalJSON = null;
+                this.editor.setValue(JSON.stringify(parsedJSON, null, 2));
+                this.hideColorEditor();
+                showToast(`✅ ${file.name} (JSON) 로드 완료`);
+            }
+        } catch (error) {
+            showToast('❌ 파일 파싱 오류');
+        }
+    };
+    reader.readAsText(file);
+},
 
     showColorEditor: function() {
         const colorWrapper = document.getElementById('colorEditorWrapper');

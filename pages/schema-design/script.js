@@ -289,6 +289,7 @@ function initApp() {
             mode: 'htmlmixed',
             lineNumbers: true,
             lineWrapping: true,
+            colorpicker: { mode: 'edit' },
         });
         
         window.editor.setValue('');

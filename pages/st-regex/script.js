@@ -48,6 +48,7 @@ function initApp() {
       lineNumbers: true,
       lineWrapping: true,
       theme: 'default',
+      colorpicker: { mode: 'edit' },
     });
     window.editor.on('change', () => {
       render();
