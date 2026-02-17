@@ -289,10 +289,14 @@ function initApp() {
             mode: 'htmlmixed',
             lineNumbers: true,
             lineWrapping: true,
+<<<<<<< HEAD
             colorpicker: {
                 mode: 'edit',
                 type: 'sketch'
             }
+=======
+            colorpicker: { mode: 'edit' },
+>>>>>>> 1f69b4d (update)
         });
         
         window.editor.setValue('');

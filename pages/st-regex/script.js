@@ -48,10 +48,14 @@ function initApp() {
       lineNumbers: true,
       lineWrapping: true,
       theme: 'default',
+<<<<<<< HEAD
       colorpicker: {
           mode: 'edit',
           type: 'sketch'
       }
+=======
+      colorpicker: { mode: 'edit' },
+>>>>>>> 1f69b4d (update)
     });
     window.editor.on('change', () => {
       render();
