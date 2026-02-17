@@ -14,7 +14,7 @@ class Router {
                 template: 'pages/theme-viewer/index.html',
                 scripts: ['pages/theme-viewer/script.js'],
                 styles: ['pages/theme-viewer/style.css'],
-                title: '테마 & TXT 뷰어'
+                title: 'JSON & TXT 뷰어'
             },
             '/schema-design': {
                 template: 'pages/schema-design/index.html',
@@ -71,8 +71,8 @@ async handleRoute() {
 
         if (window.navbarManager) {
             window.navbarManager.updateTitle(route.title);
-            }
-            document.title = '도구 모음';
+        }
+        document.title = '도구 모음';
 
         // CSS 로드
         if (route.styles) {
