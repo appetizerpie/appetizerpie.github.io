@@ -37,17 +37,10 @@ window.themeEditor = {
             indentUnit: 2,
             tabSize: 2,
             indentWithTabs: false,
-<<<<<<< HEAD
              colorpicker: {
                 mode: 'edit',
                 type: 'sketch'
             }
-=======
-            colorpicker: {
-            mode: 'edit',
-            type: 'sketch'
-        }
->>>>>>> 1f69b4d (update)
         });
 
         document.getElementById('fileInput')?.addEventListener('change', this.handleFileSelect.bind(this));
