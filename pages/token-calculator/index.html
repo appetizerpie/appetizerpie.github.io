@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>토큰 계산기 - 도구 모음</title>
+    <meta name="description" content="Gemini API 토큰 수 추정 및 비용 계산기">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap">
+    <!-- 공통 스타일 -->
+    <link rel="stylesheet" href="../../css/theme.css">
+    <link rel="stylesheet" href="../../css/navbar.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <!-- 개별 스타일 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body data-theme="light">
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="dropdown">
+                <button class="dropdown-btn" id="currentPageTitle">토큰 계산기<span class="arrow">▼</span></button>
+                <div class="dropdown-content">
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <button id="globalThemeToggle" class="icon-btn" title="전체 테마 전환">🌙</button>
+                <button id="helpBtn" class="icon-btn" title="도움말">?</button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="app">
+        <div class="calc-container">
+            <!-- 입력 -->
+            <div class="input-section">
+                <div class="input-top-row">
+                    <div class="input-label">📝 출력 내용</div>
+                    <!-- 옵션 -->
+                    <div class="options-row">
+                        <label class="option-toggle" for="useTranslation">
+                            <input type="checkbox" id="useTranslation">
+                            <span>번역기 사용</span>
+                        </label>
+                        <label class="option-toggle sub-option" for="useRealText" id="realTextOption" style="display:none;">
+                            <input type="checkbox" id="useRealText">
+                            <span>번역된 텍스트 넣기</span>
+                            <span class="toggle-hint">(정확한 토큰 계산)</span>
+                        </label>
+                    </div>
+                </div>
+                <textarea id="tokenInput" class="calc-textarea" placeholder="토큰을 계산 할 텍스트를 입력하세요..."></textarea>
+            </div>
+
+            <!-- 번역 텍스트 -->
+            <div class="input-section" id="translatedSection" style="display:none;">
+                <div class="input-label">🔄 번역된 한글 텍스트</div>
+                <textarea id="translatedInput" class="calc-textarea translated"
+                    placeholder="번역된 한글 텍스트를 여기에 붙여넣으세요...&#10;(Flash가 출력할 한글 내용)"></textarea>
+            </div>
+
+            <!-- 토큰 정보 -->
+            <div class="token-info-bar">
+                <div class="token-stat">글자 수 <strong id="statChars">0</strong></div>
+                <div class="token-divider"></div>
+                <div class="token-stat">토큰 수 <strong id="statTokens">0</strong></div>
+                <div id="translatedStats" style="display:none;">
+                    <div class="token-divider"></div>
+                    <div class="token-stat">번역 토큰 <strong id="statTransTokens">0</strong>
+                        <span class="est-badge" id="estBadge">추정</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panels-grid">
+
+                <!-- 가격 설정 (편집 가능) -->
+                <div class="cost-panel">
+                    <div class="cost-header"
+                        style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>📋 가격 설정 (1M 토큰당)</span>
+                        <button id="addModelBtn"
+                            style="padding: 4px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); font-family: 'Pretendard', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 4px;">+
+                            추가</button>
+                    </div>
+                    <div style="padding: 4px; overflow-x: auto;">
+                        <table class="pricing-table" style="min-width: 320px;">
+                            <thead>
+                                <tr>
+                                    <th>모델명</th>
+                                    <th>Input ($)</th>
+                                    <th>Output ($)</th>
+                                    <th style="width: 40px; text-align: center;">삭제</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pricingBody">
+                                <!-- JS에서 동적으로 생성됨 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 비용 -->
+                <div class="cost-panel height-100">
+                    <div class="cost-header">
+                        <span>💰 비용 계산 (모델 옵션 변경 가능)</span>
+                        <div class="exchange-input-wrap">
+                            <span class="exchange-label">환율</span>
+                            <span class="exchange-dollar">$1 =</span>
+                            <input type="number" class="exchange-input" id="exchangeRate" value="1450" step="1" min="1">
+                            <span class="exchange-unit">₩</span>
+                        </div>
+                    </div>
+                    <div class="cost-body">
+                        <div id="costBreakdown">
+                            <div class="cost-empty">텍스트를 입력하면 비용이 표시됩니다.</div>
+                        </div>
+                        <div class="cost-total-row">
+                            <div style="display:flex; align-items:center;">
+                                <span>합계</span>
+                            </div>
+                            <div class="cost-total-values">
+                                <span class="cost-total" id="totalCost">$0</span>
+                                <span class="cost-total-krw" id="totalCostKRW">₩0</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px; text-align: right;">
+                            <button id="saveHistoryBtn"
+                                style="padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; border: 1px solid var(--border-color); background: var(--btn-1, #e3f2fd); color: #1976d2; font-family: 'Pretendard', sans-serif; transition: 0.2s;">비교를
+                                위해 금액 저장</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 히스토리 영역 -->
+            <div class="history-section" style="display: none;" id="historySection">
+                <div class="history-title">
+                    <span>📝 저장된 비교 목록</span>
+                    <button id="clearHistoryBtn"
+                        style="padding: 4px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border-color); background: var(--bg-primary); color: #e74c3c; font-family: 'Pretendard', sans-serif;">전체
+                        삭제</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px; text-align: center;">비교</th>
+                                <th style="width: 35%">출력 내용</th>
+                                <th>계산 상세 (모델 및 비용)</th>
+                                <th>총 합계</th>
+                                <th style="width: 50px; text-align: center;">관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody">
+                            <!-- JS에서 동적으로 생성됨 -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- 하단 글로벌 차액 비교 영역 -->
+                <div id="globalDiffArea"
+                    style="display: none; justify-content: flex-start; align-items: center; padding: 14px 20px; border-top: 1px dashed var(--border-color); background: var(--bg-primary);">
+                    <span
+                        style="font-size: 14px; font-weight: 800; margin-right: 12px; color: var(--text-secondary);">차액:</span>
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                        <span id="globalDiffUSD"
+                            style="font-size: 16.5px; font-weight: 800; font-family: 'JetBrains Mono', 'Pretendard', monospace;">$0</span>
+                        <span id="globalDiffKRW"
+                            style="font-size: 13.5px; font-weight: 600; font-family: 'JetBrains Mono', 'Pretendard', monospace;">(₩0)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 안내 -->
+            <div class="info-box">
+                <strong>ℹ️ 참고</strong><br>
+                · 토큰 수는 Gemini 기반 <strong>근사 추정치</strong>입니다.<br>
+                · 한글은 영어보다 약 <strong>1.8~2배</strong> 더 많은 토큰을 사용합니다.<br>
+                · <strong>번역기능 사용</strong> 체크 시: Flash 번역(입력+출력) 비용이 추가됩니다.<br>
+                · <strong>번역된 텍스트 넣기</strong> 체크 시: 실제 번역문으로 정확한 토큰을 계산합니다.<br>
+                · 상단에서 모델을 <strong>추가/선택</strong>하고 가격을 수정할 수 있습니다.
+            </div>
+
+        </div>
+    </main>
+
+
+
+    <!-- 공통 스크립트 -->
+    <script src="../../js/theme.js"></script>
+    <script src="../../js/navbar.js"></script>
+    <!-- 개별 스크립트 -->
+    <script src="script.js"></script>
+</body>
+
+</html>

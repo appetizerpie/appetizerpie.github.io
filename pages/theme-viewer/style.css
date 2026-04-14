@@ -42,8 +42,8 @@
 .file-input {
     width: 100%;
     padding: 12px;
-    background: var(--textarea-bg);
-    border: var(--pre-btn-border);
+    background: var(--sub-header);
+    border: 2px solid var(--textarea-foucs-border);
     border-radius: 8px;
     font-size: 1.05em;
     cursor: pointer;
@@ -51,8 +51,9 @@
 }
 
 .file-input:hover {
-    background: var(--sub-header);
-    border-color: var(--textarea-foucs-border);
+    background: var(--textarea-bg);
+    border: var(--pre-btn-border);
+    color: var(--textarea-text);
 }
 
 /* ========== 검색 그룹 ========== */
@@ -184,6 +185,7 @@
 .CodeMirror-scroll {
     overflow-y: scroll !important;
     overflow-x: auto !important;
+    scrollbar-gutter: stable both-edges;
 }
 
 .highlight-match {
@@ -259,15 +261,17 @@
 
 .color-label {
     color: var(--textarea-text);
-    min-width: 150px;
+    width: 160px;
     flex-shrink: 0;
+    word-break: keep-all;
+    font-weight: 600;
 }
 
 .color-controls {
     display: flex;
     align-items: center;
     flex: 1;
-    gap: 6px;
+    gap: 8px;
     min-width: 0;
 }
 
@@ -275,7 +279,11 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     cursor: pointer;
-    flex-shrink: 0;
+    flex: 0.5;
+    min-width: 30px;
+    max-width: 40px;
+    height: 32px;
+    padding: 0;
 }
 
 .color-picker::-webkit-color-swatch-wrapper {
@@ -290,45 +298,56 @@
     display: flex;
     gap: 4px;
     align-items: center;
+    flex: 3; /* 남은 공간 비율 */
 }
 
 .rgba-input-wrapper {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
+    flex: 1; /* 각각의 입력칸이 균등한 넓이를 가지도록 설정 */
 }
 
 .rgba-label {
     font-weight: 600;
     color: var(--textarea-text);
     text-transform: uppercase;
+    padding: 0 2px;
 }
 
 .rgba-number-input {
+    width: 100%;
+    min-width: 0;
     padding: 6px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 0;
+    border-bottom: 2px solid #ddd;
     text-align: center;
+    background: var(--textarea-bg);
 }
 
 .rgba-number-input:focus {
     outline: none;
     border-color: var(--textarea-foucs-border);
+    background: #fff;
+    color: var(--textarea-foucs-border);
 }
 
 .hex-input {
-    flex: 1;
-    min-width: 60px;
+    flex: 1.5;
+    min-width: 0;
     padding: 6px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 0;
+    border-bottom: 2px solid #ddd;
     text-transform: uppercase;
     text-align: center;
+    background: var(--textarea-bg);
 }
 
 .hex-input:focus {
     outline: none;
+    background: #fff;
     border-color: var(--textarea-foucs-border);
+    color: var(--textarea-foucs-border);
 }
 
 .color-actions {
@@ -401,6 +420,7 @@
     padding: 20px;
     flex: 1;
     overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 
 .paste-help {
@@ -415,7 +435,6 @@
     border-radius: 6px;
     font-size: 12px;
     margin-bottom: 15px;
-    border-left: 3px solid var(--textarea-foucs-border);
     color: #555;
     line-height: 1.6;
 }
@@ -445,6 +464,10 @@
     justify-content: flex-end;
 }
 
+.paste-textarea::placeholder {
+    color: #aaa;
+    opacity: 0.6;
+}
 /* ========== 모바일 반응형 ========== */
 @media (max-width: 1600px) {
     .color-grid {
@@ -454,28 +477,30 @@
 
 @media (max-width: 900px) {
     .color-item {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row; /* 모바일에서도 가로 배치 기준 유지 */
+        align-items: center;
         gap: 8px;
+        flex-wrap: wrap; /* 좁으면 줄바꿈 허용 */
     }
 
     .color-label {
-        min-width: auto;
-        width: 100%;
+        width: 160px; /* 고정 넓이 유지 */
+        flex-shrink: 0;
     }
 
     .color-controls {
-        width: 100%;
+        flex: 1; /* 나머지 공간 차지 */
+        min-width: 220px;
         flex-wrap: wrap;
     }
 
     .rgba-inputs {
-        width: 100%;
+        flex: 1 1 180px;
         flex-wrap: wrap;
     }
 
     .hex-input {
-        max-width: none;
+        flex: 1 1 80px;
     }
 }
 

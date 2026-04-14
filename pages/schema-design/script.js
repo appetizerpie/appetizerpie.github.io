@@ -85,40 +85,6 @@ function findValuesInObjectArrays(obj, key) {
     return null;
 }
 
-/* Schema에서 모든 변수 추출 (Template 없을 때용) - 배열 자체는 제외 */
-function extractFromSchema(schema, prefix = 'data') {
-    const vars = [];
-    
-    if (typeof schema === 'object' && schema !== null && !Array.isArray(schema)) {
-        Object.keys(schema).forEach(key => {
-            const value = schema[key];
-            const fullPath = `${prefix}.${key}`;
-            
-            if (Array.isArray(value)) {
-                // 배열 자체는 추가 안 함
-                // 배열 내부 객체의 속성만 추출
-                if (value.length > 0 && typeof value[0] === 'object') {
-                    Object.keys(value[0]).forEach(subKey => {
-                        const subValue = value.map(item => item[subKey]).filter(v => v !== undefined);
-                        // 배열 요소의 속성: character.name 형식
-                        const singularKey = key.endsWith('s') ? key.slice(0, -1) : key;
-                        vars.push({ path: `${singularKey}.${subKey}`, value: subValue });
-                    });
-                }
-            } else if (typeof value === 'object' && value !== null) {
-                // 중첩 객체는 각 속성 추출
-                Object.keys(value).forEach(subKey => {
-                    vars.push({ path: `${fullPath}.${subKey}`, value: value[subKey] });
-                });
-            } else {
-                // 일반 값
-                vars.push({ path: fullPath, value });
-            }
-        });
-    }
-    
-    return vars;
-}
 
 /* 변수 추출 함수 - Template 무관하게 Schema 기반 추출 */
 function extractVariables() {

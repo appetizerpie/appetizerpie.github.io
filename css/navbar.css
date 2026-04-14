@@ -1,10 +1,10 @@
 .navbar {
-    position: fixed;
+    position: sticky;
     top: 0px;
-    left: 50%;
-    transform: translateX(-50%);
+    margin: 0 auto;
     width: var(--nav-width);
     height: 60px;
+    flex-shrink: 0;
     border-radius: 12px 12px 0 0;
     background-color: var(--nav-bg);
     z-index: 100;
@@ -17,6 +17,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
+    
 }
 
 /* 드롭다운 */

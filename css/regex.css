@@ -159,7 +159,7 @@ textarea:focus, input:focus {
 
 .find-input {
   flex: 1;
-  background: #FAFBF7;
+  background: var(--textarea-bg);
   border: var(--pre-btn-border);
   padding: 8px;
   border-radius: 8px;
@@ -256,6 +256,7 @@ textarea:focus, input:focus {
   background-color: var(--bg-primary);
   border-radius: 12px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 #preview-render {
@@ -337,7 +338,6 @@ textarea:focus, input:focus {
 @media (max-width: 768px) {
   body {
     font-size: 14px;
-    overflow-y: auto;
     height: auto;
     min-height: 100vh;
   }
@@ -487,6 +487,7 @@ textarea:focus, input:focus {
     min-height: 150px;
     max-height: 300px;
     overflow-y: auto !important;
+    scrollbar-gutter: stable both-edges;
   }
 
   #preview-render { padding: 15px; }
@@ -615,8 +616,8 @@ textarea:focus, input:focus {
 .save-json-btn {
   width: 100%;
   padding: 12px 20px;
-  background: var(--btn-1);
-  color: #fff;
+  background: var(--btn-bg);
+  color: var(--text-green);
   border: none;
   border-radius: 8px;
   font-weight: bold;
@@ -625,7 +626,6 @@ textarea:focus, input:focus {
 }
 
 .save-json-btn:hover {
-  filter: brightness(1.1);
   transform: translateY(-1px);
 }
 

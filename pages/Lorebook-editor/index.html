@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로어북 편집기</title>
+    <!-- 공통 스타일 -->
+    <link rel="stylesheet" href="../../css/theme.css">
+    <link rel="stylesheet" href="../../css/navbar.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <!-- 개별 스타일 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body data-theme="light">
+    <!-- 네비게이션 바 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="dropdown">
+                <button class="dropdown-btn" id="currentPageTitle">로어북 편집기<span class="arrow">▼</span></button>
+                <div class="dropdown-content">
+                    <!-- JS에서 동적으로 생성됨 (navbar.js) -->
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <div class="header-tools">
+                    <select id="fileSelector" onchange="switchFile()" class="file-select">
+                        <option value="">파일을 선택하세요</option>
+                    </select>
+                    <button class="nav-tool-btn icon-only" onclick="renameLorebook()" title="이름 변경">✏️</button>
+                    <input type="file" id="fileInput" accept=".json" style="display:none" multiple />
+                    <button class="nav-tool-btn" onclick="openFileDialog()">📁 열기</button>
+                    <button class="nav-tool-btn" onclick="createNewLorebook()">📄 새로 만들기</button>
+                    <button class="nav-tool-btn" onclick="downloadJSON()">💾 저장</button>
+                    <button class="nav-tool-btn" onclick="openTranslateConvertModal()">🔄 번역/변환</button>
+                </div>
+                <button id="globalThemeToggle" class="icon-btn" title="전체 테마 전환">🌙</button>
+                <button id="helpBtn" class="icon-btn" title="도움말">?</button>
+            </div>
+            
+            <!-- 모바일 햄버거 메뉴 버튼 -->
+            <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
+        </div>
+    </nav>
+
+    <main id="app" class="lorebook-app">
+        <!-- 메인 컨테이너 -->
+        <div class="editor-container">
+            <!-- 모바일 사이드바 오버레이 -->
+            <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+
+            <!-- 왼쪽 사이드바 -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <!-- 모바일용 도구 (모바일에서 검색 위에 표시) -->
+                    <div class="mobile-tools">
+                        <select id="mobileFileSelector" onchange="switchFileMobile()" class="file-select">
+                            <option value="">파일 선택 안됨</option>
+                        </select>
+                        <div class="mobile-tool-btns">
+                            <button class="nav-tool-btn" onclick="openFileDialog()">열기</button>
+                            <button class="nav-tool-btn" onclick="createNewLorebook()">새로만들기</button>
+                            <button class="nav-tool-btn" onclick="downloadJSON()">저장</button>
+                        </div>
+                        <div class="mobile-tool-btns">
+                            <button class="nav-tool-btn" onclick="renameLorebook()">✏️ 이름변경</button>
+                            <button class="nav-tool-btn" onclick="openTranslateConvertModal()">🔄 번역/변환</button>
+                        </div>
+                    </div>
+                    <!-- 검색창 -->
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 제목/내용/키워드 검색..." onkeyup="filterList()"/>
+                    </div>
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="사이드바 접기">◀</button>
+                </div>
+
+                <div class="bulk-tools" id="bulkTools" style="display:none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <span>선택: <strong id="selectedCount">0</strong></span>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="bulk-btn" onclick="selectAllEntries()">전체선택</button>
+                            <button class="bulk-btn" onclick="deselectAllEntries()">전체해제</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; gap: 8px;">
+                        <button class="bulk-btn" onclick="openBulkEditModal()" style="flex: 1;">일괄편집</button>
+                        <button class="bulk-btn" onclick="openTransferModal()" style="flex: 1;">이동/복사</button>
+                        <button class="bulk-btn danger" onclick="deleteSelectedEntries()" style="flex: 1;">삭제</button>
+                    </div>
+                </div>
+
+                <div class="entry-list-container">
+                    <div class="list-controls">
+                        <button class="select-mode-btn" id="selectModeBtn" onclick="toggleSelectMode()">☐ 선택 모드</button>
+                        <button class="add-entry-btn" onclick="addNewEntry()">+ 새 항목</button>
+                    </div>
+                    <ul class="entry-list" id="entryList"></ul>
+                </div>
+            </aside>
+            
+            <!-- 닫힌 사이드바를 열기 위한 버튼 -->
+            <button class="sidebar-open-btn" id="sidebarOpenBtn" onclick="toggleSidebar()" title="사이드바 열기">▶</button>
+
+            <!-- 오른쪽 편집기 영역 -->
+            <section class="editor-main" id="editorArea">
+                <div id="emptyState" class="empty-state">
+                    <h2>파일을 선택하세요</h2>
+                    <p>상단의 '파일 열기'로 Json 로어북을 불러오거나,<br/>'새로 만들기'로 빈 로어북을 생성하세요.<br/>왼쪽 목록에서 항목을 선택하세요.</p>
+                </div>
+
+                <div id="editorContent" class="editor-content-wrap">
+                    
+                    <!-- 1줄: 순번 + 활성화 + 제목 -->
+                    <div class="editor-row mb-3">
+                        <div class="form-group">
+                            <label class="form-label">순서</label>
+                            <input type="number" id="inputSeqIndex" class="form-input seq-index-input" title="순서 변경" min="1" onkeydown="if(event.key==='Enter') changeEntryOrder(this.value)" onblur="changeEntryOrder(this.value)"/>
+                        </div>
+                        <label class="enable-toggle" style="align-self: flex-end;">
+                            <input type="checkbox" id="chkEnable" onchange="updateEnable()" checked>
+                            <span class="enable-toggle-label" id="enableLabel">활성화</span>
+                        </label>
+                        <div class="form-group" style="flex:1; margin-bottom:0;">
+                            <label class="form-label">제목</label>
+                            <input type="text" id="inputComment" class="form-input" style="min-width: 180px;" oninput="updateField('comment'); updateListItemName()" placeholder="항목 제목..."/>
+                        </div>
+                    </div>
+
+                    <!-- Panel: 발동 및 위치 설정 -->
+                    <div class="panel mb-3">
+                        <div class="panel-title" onclick="togglePanel('activation-panel')" style="cursor:pointer; display:flex; justify-content:space-between;">
+                            <span>⚙️ 발동 및 위치 설정</span> <span id="activation-panel-icon">▶</span>
+                        </div>
+                        <div id="activation-panel" class="panel-collapse gap-15 flex-col" style="display:none;">
+                            <!-- 발동방식 + 삽입위치 -->
+                            <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                                <div class="form-group">
+                                    <label class="form-label">발동 방식</label>
+                                    <select id="selectStrategy" class="form-select" onchange="updateStrategy()">
+                                        <option value="selective">🟢 키워드 반응</option>
+                                        <option value="constant">🔵 항상 반응</option>
+                                        <option value="vectorized">🔗 벡터화</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">삽입 위치</label>
+                                    <select id="selectPosition" class="form-select" onchange="updatePosition()">
+                                        <option value="0">캐릭터 정의 전</option>
+                                        <option value="1">캐릭터 정의 후</option>
+                                        <option value="5">↑EM</option>
+                                        <option value="6">↓EM</option>
+                                        <option value="2">작가 노트 전</option>
+                                        <option value="3">작가 노트 후</option>
+                                        <option value="4-0">@D ⚙</option>
+                                        <option value="4-1">@D 👤</option>
+                                        <option value="4-2">@D 🤖</option>
+                                        <option value="7">➡ Outlet</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- 깊이 + 순서 + 트리거 -->
+                            <div class="form-row" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+                                <div class="form-group" id="depthGroup">
+                                    <label class="form-label">깊이 (Depth)</label>
+                                    <input type="number" id="inputDepth" class="form-input" oninput="updateField('depth', true)" disabled/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">순서 (Order)</label>
+                                    <input type="number" id="inputOrder" class="form-input" oninput="updateField('order', true)"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Trigger %</label>
+                                    <input type="number" id="inputProbability" class="form-input" min="0" max="100" oninput="updateField('probability', true)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 키워드 설정 -->
+                    <div class="panel mb-3">
+                        <div class="panel-title" onclick="togglePanel('keyword-panel')" style="cursor:pointer; display:flex; justify-content:space-between;">
+                            <span>🔑 키워드 설정</span> <span id="keyword-panel-icon">▶</span>
+                        </div>
+                        <div id="keyword-panel" class="panel-collapse">
+                            <!-- 3줄: 키워드 + 논리구조 + 보조키워드 -->
+                            <div class="editor-row-keywords">
+                                <div class="form-group" style="flex:2; min-width: 200px;">
+                                    <label class="form-label">키워드 <span style="font-size:11px; color:var(--text-secondary);">&nbsp; 쉼표(,)로 구분</span></label>
+                                    <textarea id="inputKey" class="form-textarea form-textarea-auto" translate="yes" oninput="updateArrayField('key'); autoResize(this)" placeholder="키워드1, 키워드2..."></textarea>
+                                </div>
+                                <div class="form-group" style="flex:1; min-width: 160px;">
+                                    <label class="form-label">논리 구조</label>
+                                    <select id="inputSelectiveLogic" class="form-select" onchange="updateField('selectiveLogic', true)">
+                                        <option value="0">AND ANY (하나라도 일치)</option>
+                                        <option value="1">AND ALL (모두 일치)</option>
+                                        <option value="2">NOT ANY (모두 불일치)</option>
+                                        <option value="3">NOT ALL (하나라도 불일치)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="flex:2; min-width: 200px;">
+                                    <label class="form-label">보조 키워드 <span style="font-size:11px; color:var(--text-secondary);">&nbsp; 쉼표(,)로 구분</span></label>
+                                    <textarea id="inputKeysecondary" class="form-textarea form-textarea-auto" translate="yes" oninput="updateArrayField('keysecondary'); autoResize(this)" placeholder="보조키워드1, 보조키워드2..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4줄: 내용 -->
+                    <div class="form-group mb-3">
+                        <div class="label-row mb-5" style="flex-wrap: wrap; gap: 8px;">
+                            <label class="form-label" style="margin-bottom: 0;">내용 (Content)</label>
+                            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                <span class="token-counter" style="margin-right: 4px;">추정 토큰 수: <strong id="tokenCount">0</strong></span>
+                                <button class="nav-tool-btn" type="button" onclick="expandContent()" style="padding: 2px 8px; font-size: 11px; height: 24px; min-width: auto; background: var(--btn-1); color: white;">+ 칸 늘리기</button>
+                                <button class="nav-tool-btn" type="button" onclick="resetContent()" style="padding: 2px 8px; font-size: 11px; height: 24px; min-width: auto; background: var(--hover-bg); border: 1px solid var(--border-color); color: var(--lb-danger);">↺ 원래대로</button>
+                            </div>
+                        </div>
+                        <textarea id="inputContent" class="form-textarea content-textarea" translate="yes" oninput="updateField('content'); countTokens()"></textarea>
+                    </div>
+
+                    <!-- 5줄: 고급 설정 -->
+                    <div class="panel mb-3">
+                        <div class="panel-title" onclick="togglePanel('adv-panel')" style="cursor:pointer; display:flex; justify-content:space-between;">
+                            <span>🔧 고급 설정</span> <span id="adv-panel-icon">▶</span>
+                        </div>
+                        <div id="adv-panel" class="panel-collapse gap-15 flex-col" style="display:none;">
+                            <div class="form-row">
+
+                                <div class="form-group">
+                                    <label class="form-label">전체 단어 일치 (Whole Words)</label>
+                                    <select id="inputMatchWholeWords" class="form-select" onchange="updateNullableBoolean('matchWholeWords')">
+                                        <option value="null">User global</option>
+                                        <option value="true">예</option>
+                                        <option value="false">아니오</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">스캔 깊이 (Scan Depth)</label>
+                                    <input type="number" id="inputScanDepth" class="form-input" placeholder="User global (빈칸)" oninput="updateNullableField('scanDepth')"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">대소문자 구분 (Case)</label>
+                                    <select id="inputCaseSensitive" class="form-select" onchange="updateNullableBoolean('caseSensitive')">
+                                        <option value="null">User global</option>
+                                        <option value="true">예</option>
+                                        <option value="false">아니오</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- 소속/그룹 패널 -->
+                    <div class="panel">
+                        <div class="panel-title" onclick="togglePanel('group-panel')" style="cursor:pointer; display:flex; justify-content:space-between;">
+                            <span>🏷️ 그룹 및 재귀 설정</span> <span id="group-panel-icon">▶</span>
+                        </div>
+                        <div id="group-panel" class="panel-collapse gap-15 flex-col" style="display:none;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">소속 그룹명</label>
+                                    <input type="text" id="inputGroup" class="form-input" oninput="updateField('group')"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">그룹 가중치</label>
+                                    <input type="number" id="inputGroupWeight" class="form-input" oninput="updateField('groupWeight', true)"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">스코어링 방식</label>
+                                    <select id="inputUseGroupScoring" class="form-select" onchange="updateNullableBoolean('useGroupScoring')">
+                                        <option value="null">User global</option>
+                                        <option value="true">True</option>
+                                        <option value="false">False</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="checkboxes-row">
+                                <label class="checkbox-label"><input type="checkbox" id="chkExcludeRecursion" onchange="updateCheckedField('excludeRecursion', false)"> 재귀에서 제외 (Exclude Recursion)</label>
+                                <label class="checkbox-label"><input type="checkbox" id="chkPreventRecursion" onchange="updateCheckedField('preventRecursion', false)"> 추가 재귀 방지 (Prevent Recursion)</label>
+                                <label class="checkbox-label"><input type="checkbox" id="chkDelayUntilRecursion" onchange="updateCheckedField('delayUntilRecursion', false)"> 재귀까지 지연 (Delay Until Rec)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 일괄 편집 모달 -->
+    <div id="bulkEditModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>선택 항목 일괄 편집</h3>
+                <span class="close" onclick="closeModal('bulkEditModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--text-secondary);">옵션 변경</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>스캔 깊이</label>
+                        <select id="bulkScanDepth" class="form-select">
+                            <option value="skip">변경 안함</option>
+                            <option value="null">User global (null)</option>
+                            <option value="custom">상세 입력...</option>
+                        </select>
+                        <input type="number" id="bulkScanDepthStr" class="form-input mt-1" style="display:none" placeholder="깊이 숫자 입력">
+                    </div>
+                    <div class="form-group">
+                        <label>단어 일치</label>
+                        <select id="bulkWholeWords" class="form-select">
+                            <option value="skip">변경 안함</option>
+                            <option value="null">User global (null)</option>
+                            <option value="true">True</option>
+                            <option value="false">False</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>대소문자 구분</label>
+                        <select id="bulkCaseSensitive" class="form-select">
+                            <option value="skip">변경 안함</option>
+                            <option value="null">User global (null)</option>
+                            <option value="true">True</option>
+                            <option value="false">False</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr style="margin: 15px 0; border:0; border-top: 1px solid var(--border-color);">
+                <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--text-secondary);">텍스트 찾기 및 바꾸기</h4>
+                <div class="form-group">
+                    <label>대상 필드</label>
+                    <select id="bulkTargetField" class="form-select">
+                        <option value="comment">타이틀(Comment)</option>
+                        <option value="key">키워드(Key)</option>
+                        <option value="content">내용(Content)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>찾을 문자열</label>
+                    <input type="text" id="bulkSearchStr" class="form-input" placeholder="문자열">
+                </div>
+                <div class="form-group">
+                    <label>바꿀 문자열</label>
+                    <input type="text" id="bulkReplaceStr" class="form-input" placeholder="대체할 문자열">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="bulk-btn" onclick="closeModal('bulkEditModal')">취소</button>
+                <button class="bulk-btn primary" onclick="applyBulkEdit()">적용하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이동/복사/순서변경 모달 -->
+    <div id="transferModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>선택 항목 이동 / 복사 / 순서 변경</h3>
+                <span class="close" onclick="closeModal('transferModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>선택된 <strong id="transferCount">0</strong>개의 항목 처리 방식을 선택하세요.</p>
+                
+                <div class="form-row" style="margin-top: 15px; margin-bottom: 20px;">
+                    <label style="cursor: pointer;"><input type="radio" name="transferMode" value="order" checked onchange="toggleTransferMode()"> 순서 변경하기</label>
+                    <label style="cursor: pointer;"><input type="radio" name="transferMode" value="file" onchange="toggleTransferMode()"> 다른 파일로 보내기</label>
+                </div>
+
+                <!-- 파일 전송 옵션 -->
+                <div id="transferFileOptions">
+                    <div class="form-group">
+                        <label>대상 파일 (로드된 파일 목록)</label>
+                        <select id="transferTargetFile" class="form-select">
+                            <option value="">대상 파일 선택</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 순서 변경 옵션 -->
+                <div id="transferOrderOptions" style="display: none;">
+                    <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+                        <button class="bulk-btn" onclick="quickOrderChange('top')" style="flex: 1;">⬆ 맨 위로 이동</button>
+                        <button class="bulk-btn" onclick="quickOrderChange('bottom')" style="flex: 1;">⬇ 맨 아래로 이동</button>
+                    </div>
+                    <div class="form-group">
+                        <label>이 항목 아래로 이동합니다</label>
+                        <select id="transferTargetEntry" class="form-select">
+                            <option value="">항목 선택</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="transferFileFooter">
+                <button class="bulk-btn" onclick="closeModal('transferModal')">취소</button>
+                <button class="bulk-btn primary" onclick="applyTransfer('copy')">복사 (Copy)</button>
+                <button class="bulk-btn danger" onclick="applyTransfer('move')">이동 (Move)</button>
+            </div>
+            <div class="modal-footer" id="transferOrderFooter" style="display: none;">
+                <button class="bulk-btn" onclick="closeModal('transferModal')">취소</button>
+                <button class="bulk-btn primary" onclick="applyOrderChange()">순서 변경 적용</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 번역/변환 통합 모달 -->
+    <div id="translateConvertModal" class="modal-overlay">
+        <div class="modal-container" style="max-width: 720px;">
+            <div class="modal-header" style="display: flex; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--lb-card-border);">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; flex: 1; padding-right: 10px;">
+                    <button id="tcTranslateTab" class="bulk-btn active" onclick="switchTcTab('translate')" style="padding: 10px 20px; font-weight: bold; flex: 1; min-width: 130px; white-space: normal; line-height: 1.3;">🌐 키워드 번역</button>
+                    <button id="tcConvertTab" class="bulk-btn" onclick="switchTcTab('convert')" style="padding: 10px 20px; font-weight: bold; flex: 1; min-width: 130px; white-space: normal; line-height: 1.3;">🔄 스크립트 변환</button>
+                </div>
+                <span class="close" onclick="closeModal('translateConvertModal')" style="margin-left: auto;">&times;</span>
+            </div>
+            <div class="modal-body" style="padding-top: 16px;">
+                <!-- ===== 번역 섹션 ===== -->
+                <div id="tcTranslateSection">
+                    <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 12px 0;">
+                        로어북의 고유 키워드 <strong id="kwCount">0</strong>개를 추출했습니다.<br/>
+                        번역 후 적용하면 모든 항목의 키워드가 일괄 교체됩니다.
+                    </p>
+
+                    <!-- 모드 탭 -->
+                    <div style="display: flex; gap: 4px; margin-bottom: 16px;">
+                        <button id="kwBulkTab" class="bulk-btn active" onclick="switchKwMode('bulk')" style="flex:1;">📋 일괄 변경</button>
+                        <button id="kwManualTab" class="bulk-btn" onclick="switchKwMode('manual')" style="flex:1;">✏️ 수동 입력</button>
+                    </div>
+
+                    <!-- 일괄 모드 -->
+                    <div id="kwBulkSection">
+                        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 12px;">
+                            <p style="font-size: 12px; color: var(--lb-hint-color); margin: 0; line-height: 1.5;">
+                                ① 아래 원본 키워드를 복사 →
+                                ② 번역기 사용(수동) →
+                                ③ 번역 결과를 오른쪽에 붙여넣기 (한 줄에 하나씩, 같은 순서)
+                            </p>
+                            <label style="font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--text-color);">
+                                <input type="checkbox" id="kwEnableChunking" onchange="toggleKwChunking()" checked>
+                                100개씩 끊어보기
+                            </label>
+                        </div>
+                        <!-- 청크(페이지) 컨트롤 -->
+                        <div id="kwChunkControls" style="display: none; flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 12px; padding: 10px 14px; background: var(--btn-hover, #f0f0f0); border: 1px solid var(--lb-card-border); border-radius: 6px;">
+                            <div style="font-size: 13px; color: var(--text-color); line-height: 1.4;">
+                                <strong>페이지 <span id="kwChunkPage">1</span> / <span id="kwChunkTotal">1</span></strong>
+                                <span style="display: inline-block; font-size: 12px; color: var(--text-secondary);"> (키워드 <strong id="kwChunkRange">1-100</strong> / 총 <strong id="kwChunkTotalCount">0</strong>개)</span>
+                            </div>
+                            <div style="display: flex; gap: 8px; width: 100%;">
+                                <button class="bulk-btn" onclick="prevKwChunk()" style="flex: 1; padding: 8px 12px;">◀ 이전</button>
+                                <button class="bulk-btn" onclick="nextKwChunk()" style="flex: 1; padding: 8px 12px;">다음 ▶</button>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <label class="form-label" style="margin:0;">원본 키워드</label>
+                                    <button id="kwCopyBtn" class="bulk-btn" onclick="copyKeywordsToClipboard()" style="font-size: 11px; padding: 3px 10px;">📋 복사</button>
+                                </div>
+                                <textarea id="kwOriginalList" class="form-textarea" readonly style="min-height: 280px; font-size: 13px; font-family: monospace; resize: vertical; border: 1px solid var(--lb-card-border) !important; background: var(--bg-1, #fafafa) !important; color: var(--text-color, #111) !important; opacity: 1 !important;"></textarea>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label class="form-label" style="margin-bottom: 6px; display:block;">변경된 키워드</label>
+                                <textarea id="kwTranslatedList" class="form-textarea" style="min-height: 280px; font-size: 13px; font-family: monospace; resize: vertical;" placeholder="번역된 키워드를 여기에 붙여넣으세요...&#10;(한 줄에 하나씩, 왼쪽과 같은 순서)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 수동 모드 -->
+                    <div id="kwManualSection" style="display: none;">
+                        <p style="font-size: 12px; color: var(--lb-hint-color); margin: 0 0 8px 0;">
+                            각 키워드 옆에 번역을 직접 입력하세요. 빈칸은 변경하지 않습니다.
+                        </p>
+                        <div style="max-height: 360px; overflow-y: auto; border: 1px solid var(--lb-card-border); border-radius: 8px;">
+                            <table class="kw-table" style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <thead>
+                                    <tr style="position: sticky; top: 0; background: var(--sub-header, #f5f5f5); z-index: 1;">
+                                        <th style="padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--lb-card-border);">원본</th>
+                                        <th style="padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--lb-card-border);">번역</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="kwManualTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== 변환 섹션 ===== -->
+                <div id="tcConvertSection" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">스크립트</label>
+                        <textarea id="convertInput" class="form-textarea" style="min-height: 180px; font-size: 12px; resize: vertical;" placeholder='스크립트 배열을 여기에 붙여넣으세요..&#10;[{"name": "...", "content": "...", ...}]'></textarea>
+                    </div>
+                </div>
+            </div>
+            <!-- 번역 푸터 -->
+            <div class="modal-footer" id="tcTranslateFooter" style="flex-wrap: wrap;">
+                <button class="bulk-btn" onclick="closeModal('translateConvertModal')" style="flex: 1; min-width: 100px;">취소</button>
+                <button class="bulk-btn primary" onclick="applyKeywordTranslation()" style="flex: 1; min-width: 100px;">적용하기</button>
+            </div>
+            <!-- 변환 푸터 -->
+            <div class="modal-footer" id="tcConvertFooter" style="display: none; flex-wrap: wrap;">
+                <button class="bulk-btn" onclick="closeModal('translateConvertModal')" style="flex: 1; min-width: 100px;">취소</button>
+                <button class="bulk-btn" onclick="saveConvertedLorebook()" style="background: var(--btn-2); flex: 1; min-width: 100px;">💾 파일 저장</button>
+                <button class="bulk-btn primary" onclick="openConvertedInEditor()" style="flex: 1; min-width: 100px;">📂 편집기에 열기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 공통 스크립트 -->
+    <script src="../../js/theme.js"></script>
+    <script src="../../js/navbar.js"></script>
+    <!-- 개별 스크립트 -->
+    <script src="script.js"></script>
+</body>
+</html>
