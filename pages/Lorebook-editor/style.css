@@ -939,7 +939,7 @@
 
     .editor-content-wrap {
         padding: 16px 12px;
-        max-width: 100%;
+        max-width: 100dvh;
     }
 
     /* 모바일: 키워드/논리구조/보조키워드를 세로 3줄로 */
